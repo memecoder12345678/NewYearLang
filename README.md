@@ -6,8 +6,8 @@
     "Happynewyear" <Ident>                                         // return
     | "Peachblossom" <Ident> "=" <Expr>                            // var
     | "Caramelizedporkandeggs" <Expr> "{" <Scope> "}"              // if
-    | "Firework" <Expr> "{" <Scope> "}"                           // while
-    | "Countdown" <ForInit> <Expr> ";" <ForUpdate> "{" <Scope> "}"  // for
+    | "Firework" <Expr> "{" <Scope> "}"                            // while
+    | "Countdown" <ForInit> <Expr> ";" <ForUpdate> "{" <Scope> "}" // for
 
 <ForInit> ::= "Peachblossom" <Ident> "=" <Expr> ";"
 
