@@ -9,7 +9,7 @@
     | "Firework" <Expr> "{" <Scope> "}"                           // while
     | "Countdown" <ForInit> <Expr> ";" <ForUpdate> "{" <Scope> "}"  // for
 
-<ForInit> ::= "Peachblossom" <Ident> "=" <Expr> ";"                // Khởi tạo vòng lặp
+<ForInit> ::= "Peachblossom" <Ident> "=" <Expr> ";"
 
 <ForUpdate> ::= "Peachblossom" <Ident> "=" <Expr> ";"
 
@@ -35,4 +35,5 @@
 
 <Ident> ::= [a-zA-Z_][a-zA-Z0-9_]*
 ```
-Happy New Year !!!
+Requirement: Python, Nasm, Gcc
+🎆 Happy New Year 2025 🎇
