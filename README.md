@@ -35,8 +35,8 @@
 
 <Ident> ::= [a-zA-Z_][a-zA-Z0-9_]*
 ```
-The `Happynewyear` statement returns the value as an exit code. These exit codes can be accessed through system commands such as echo $LASTEXITCODE or echo %errorlevel%.
+The `Happynewyear` statement returns the value as an exit code. These exit codes can be accessed through system commands such as `echo $LASTEXITCODE` or `echo %errorlevel%`.
 
-Requirement: Python, Nasm, Gcc
+Requirement: `Python`, `Nasm`, `Gcc`
 
 🎆 Happy New Year 2025 🎇
