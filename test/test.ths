@@ -1,0 +1,27 @@
+Peachblossom x = 5;
+Peachblossom y = 10;
+Peachblossom z = 0;
+
+Caramelizedporkandeggs x + y > 10 {
+    Peachblossom z = x * y;
+    Caramelizedporkandeggs z > 50 {
+        Peachblossom z = z - 5;
+    } Chungcake {
+        Peachblossom z = z + 5;
+    }
+} Chungcake {
+    Peachblossom z = x + y;
+}
+
+Peachblossom sum = 0;
+Countdown Peachblossom i = 0; i < 10; Peachblossom i = i + 1; {
+    sum = sum + i;
+}
+
+Peachblossom sum = sum + z;
+
+Firework sum > 0 {
+    Peachblossom sum = sum - 1;
+}
+
+Happynewyear sum;
