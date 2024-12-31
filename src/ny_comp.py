@@ -1,5 +1,5 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#                       TH-Script                       #
+#                      NewYear-Lang                     #
 #       Author: MemeCoder (memecoder17@gmail.com)       #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 from typing import List, Optional, Union
@@ -657,15 +657,3 @@ subprocess.run(["nasm", "-f", "win64", os.path.join(output_dir, filename + ".asm
 subprocess.run(["gcc", "-o", os.path.join(output_dir, filename + ".exe"), os.path.join(output_dir, filename + ".obj")])
 result = subprocess.run(os.path.join(output_dir, filename + ".exe"), capture_output=True, text=True)
 print(result.returncode)
-# # # # # # # # # # # # # # # # # # # #
-#                                     #
-#    /$$$$$$$$ /$$   /$$  /$$$$$$     #
-#   |__  $$__/| $$  | $$ /$$__  $$    #
-#      | $$   | $$  | $$| $$  \__/    #
-#      | $$   | $$$$$$$$|  $$$$$$     #
-#      | $$   | $$__  $$ \____  $$    #
-#      | $$   | $$  | $$ /$$  \ $$    #
-#      | $$   | $$  | $$|  $$$$$$/    #
-#      |__/   |__/  |__/ \______/     #
-#                                     #
-# # # # # # # # # # # # # # # # # # # #
