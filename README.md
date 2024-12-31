@@ -39,4 +39,4 @@ The `Happynewyear` statement returns the value as an exit code. These exit codes
 
 Requirement: `Python`, `Nasm`, `Gcc`
 
-🎆 Happy New Year 2025 🎇
+**🎆 Happy New Year 2025 🎇**
