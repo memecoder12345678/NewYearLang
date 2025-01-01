@@ -155,7 +155,7 @@ class NodeStmtHomework(NodeStmt):
     pass
 
 
-class NodeStmtNext(NodeStmt):
+class NodeStmtNextyear(NodeStmt):
     pass
 
 
@@ -197,7 +197,7 @@ class TokenType:
     LTE = "<="
     GTE = ">="
     HOMEWORK = "Homework"
-    NEXT = "Next"
+    NEXTYEAR = "Nextyear"
 
 
 class Token:
@@ -263,8 +263,8 @@ class Tokenizer:
                     tokens.append(Token(TokenType.COUNTDOWN, line_count))
                 elif buffer == "Homework":
                     tokens.append(Token(TokenType.HOMEWORK, line_count))
-                elif buffer == "Next":
-                    tokens.append(Token(TokenType.NEXT, line_count))
+                elif buffer == "Nextyear":
+                    tokens.append(Token(TokenType.NEXTYEAR, line_count))
                 else:
                     tokens.append(Token(TokenType.IDENT, line_count, buffer))
 
@@ -527,17 +527,17 @@ class Parser:
                 )
                 sys.exit(1)
             return NodeStmtHomework()
-        elif token.type == TokenType.NEXT:
+        elif token.type == TokenType.NEXTYEAR:
             if self.in_loop == 0:
-                print(f"{RED}ERROR: 'Next' not within loop at line {token.line}{RESET}")
+                print(f"{RED}ERROR: 'Nextyear' not within loop at line {token.line}{RESET}")
                 sys.exit(1)
             self.consume()
             if self.consume().type != TokenType.SEMI:
                 print(
-                    f"{RED}ERROR: Expected ';' after 'Next' at line {token.line}{RESET}"
+                    f"{RED}ERROR: Expected ';' after 'Nextyear' at line {token.line}{RESET}"
                 )
                 sys.exit(1)
-            return NodeStmtNext()
+            return NodeStmtNextyear()
         else:
             print(f"{RED}ERROR: Unexpected statement at line {token.line}{RESET}")
             sys.exit(1)
@@ -710,9 +710,9 @@ class Generator:
             self.gen_stmt(stmt.update)
             self.m_output.append(f"\tjmp {label_start}")
             self.m_output.append(f"{label_end}:")
-        elif isinstance(stmt, NodeStmtNext):
+        elif isinstance(stmt, NodeStmtNextyear):
             if not self.m_label_stack:
-                raise RuntimeError("No enclosing loop for 'Next'")
+                raise RuntimeError("No enclosing loop for 'Nextyear'")
             label_start, _ = self.m_label_stack[-1]
             self.m_output.append(f"\tjmp {label_start}")
         elif isinstance(stmt, NodeStmtHomework):
