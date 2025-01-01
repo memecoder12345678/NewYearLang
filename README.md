@@ -8,7 +8,7 @@
     | "Caramelizedporkandeggs" <Expr> "{" <Scope> "}"              // if
     | "Firework" <Expr> "{" <Scope> "}"                            // while
     | "Countdown" <ForInit> <Expr> ";" <ForUpdate> "{" <Scope> "}" // for
-    | "Next;"                                                      // continue
+    | "Nextyear;"                                                  // continue
     | "Homework;"                                                  // break
     | "@" <Comment>                                                // comment
 
