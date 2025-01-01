@@ -27,6 +27,12 @@
     | <Expr> "/" <Expr>        {prec = 1}
     | <Expr> "+" <Expr>        {prec = 0}
     | <Expr> "-" <Expr>        {prec = 0}
+    | <Expr> "==" <Expr>       {prec = 2}
+    | <Expr> "!=" <Expr>       {prec = 2}
+    | <Expr> "<" <Expr>        {prec = 2}
+    | <Expr> ">" <Expr>        {prec = 2}
+    | <Expr> "<=" <Expr>       {prec = 2}
+    | <Expr> ">=" <Expr>       {prec = 2}
 
 <Term> ::= <IntLit> 
     | <Ident> 
