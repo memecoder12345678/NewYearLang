@@ -436,7 +436,7 @@ class Parser:
         token = self.peek()
         if token is None:
             print(
-                f"{RED}ERROR: Unexpected end of file Firework parsing statement.{RESET}"
+                f"{RED}ERROR: Unexpected end of file while parsing statement.{RESET}"
             )
             sys.exit(1)
         if token.type == TokenType.COMMENT:
@@ -507,7 +507,7 @@ class Parser:
             condition = self.parse_expr()
             if self.consume().type != TokenType.SEMI:
                 print(
-                    f"{RED}ERROR: Expected ';' after Countdown loop condition at line {token.line}{RESET}"
+                    f"{RED}ERROR: Expected ';' after 'Countdown' loop condition at line {token.line}{RESET}"
                 )
                 sys.exit(1)
             update = self.parse_stmt()
