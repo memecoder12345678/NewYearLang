@@ -1,13 +1,16 @@
 # NewYear-Lang
 ```plain text
-<Prog> ::= <Stmt>*
+<Prog> ::= <Stmt>* 
 
 <Stmt> ::= 
-    "Happynewyear" <Ident>                                         // return
-    | "Peachblossom" <Ident> "=" <Expr>                            // var
+    "Happynewyear" <Ident> ";"                                     // return
+    | "Peachblossom" <Ident> "=" <Expr> ";"                        // var
     | "Caramelizedporkandeggs" <Expr> "{" <Scope> "}"              // if
     | "Firework" <Expr> "{" <Scope> "}"                            // while
     | "Countdown" <ForInit> <Expr> ";" <ForUpdate> "{" <Scope> "}" // for
+    | "Next;"                                                      // continue
+    | "Homework;"                                                  // break
+    | "@" <Comment>                                                // comment
 
 <ForInit> ::= "Peachblossom" <Ident> "=" <Expr> ";"
 
@@ -15,10 +18,8 @@
 
 <Scope> ::= <Stmt>*
 
-<IfPred> ::= 
-    "Chungcake" "{" <Scope> "}"                                    // else
-    | ε
-                                                          
+<Comment> ::= .*
+
 <Expr> ::= <Term> 
     | <BinExpr>
 

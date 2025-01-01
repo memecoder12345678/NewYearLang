@@ -17,109 +17,157 @@ MAGENTA = "\033[95m"
 CYAN = "\033[96m"
 RESET = "\033[0m"
 
+
 class Node:
     pass
+
 
 class NodeTerm(Node):
     pass
 
+
 class NodeStmt(Node):
     pass
 
+
 class NodeExpr(Node):
     pass
+
 
 class NodeTermIntLit(NodeTerm):
     def __init__(self, value: int):
         self.value = value
 
+
 class NodeTermIdent(NodeTerm):
     def __init__(self, value: str):
         self.value = value
 
+
 class NodeTermParen(NodeTerm):
     def __init__(self, expr: NodeExpr):
         self.expr = expr
+
 
 class NodeBinExpr(NodeExpr):
     def __init__(self, lhs: NodeExpr, rhs: NodeExpr):
         self.lhs = lhs
         self.rhs = rhs
 
+
 class NodeBinExprAdd(NodeBinExpr):
     pass
+
 
 class NodeBinExprSub(NodeBinExpr):
     pass
 
+
 class NodeBinExprMulti(NodeBinExpr):
     pass
+
 
 class NodeBinExprDiv(NodeBinExpr):
     pass
 
+
 class NodeBinExprAnd(NodeBinExpr):
     pass
+
 
 class NodeBinExprOr(NodeBinExpr):
     pass
 
+
 class NodeBinExprEq(NodeBinExpr):
     pass
+
 
 class NodeBinExprNeq(NodeBinExpr):
     pass
 
+
 class NodeBinExprLt(NodeBinExpr):
     pass
+
 
 class NodeBinExprGt(NodeBinExpr):
     pass
 
+
 class NodeBinExprLte(NodeBinExpr):
     pass
+
 
 class NodeBinExprGte(NodeBinExpr):
     pass
 
+
 class NodeStmtHappynewyear(NodeStmt):
     def __init__(self, expr: NodeExpr):
         self.expr = expr
+
 
 class NodeStmtPeachblossom(NodeStmt):
     def __init__(self, ident: str, expr: NodeExpr):
         self.ident = ident
         self.expr = expr
 
+
 class NodeStmtComment(NodeStmt):
     def __init__(self, content: str):
         self.content = content
 
+
 class NodeStmtCaramelizedporkandeggs(NodeStmt):
-    def __init__(self, condition: NodeExpr, true_block: List[NodeStmt], false_block: Optional[List[NodeStmt]] = None):
+    def __init__(
+        self,
+        condition: NodeExpr,
+        true_block: List[NodeStmt],
+        false_block: Optional[List[NodeStmt]] = None,
+    ):
         self.condition = condition
         self.true_block = true_block
         self.false_block = false_block
+
 
 class NodeStmtFirework(NodeStmt):
     def __init__(self, condition: NodeExpr, block: List[NodeStmt]):
         self.condition = condition
         self.block = block
 
+
 class NodeStmtCountdown(NodeStmt):
-    def __init__(self, init: NodeStmt, condition: NodeExpr, update: NodeStmt, block: List[NodeStmt]):
+    def __init__(
+        self,
+        init: NodeStmt,
+        condition: NodeExpr,
+        update: NodeStmt,
+        block: List[NodeStmt],
+    ):
         self.init = init
         self.condition = condition
         self.update = update
         self.block = block
 
+
+class NodeStmtHomework(NodeStmt):
+    pass
+
+
+class NodeStmtNext(NodeStmt):
+    pass
+
+
 class NodeScope:
     def __init__(self, stmts: List[NodeStmt]):
         self.stmts = stmts
 
+
 class NodeProg:
     def __init__(self, stmts: List[NodeStmt]):
         self.stmts = stmts
+
 
 # --- Token Definitions ---
 class TokenType:
@@ -148,12 +196,16 @@ class TokenType:
     GT = ">"
     LTE = "<="
     GTE = ">="
+    HOMEWORK = "Homework"
+    NEXT = "Next"
+
 
 class Token:
     def __init__(self, type: str, line: int, value: Optional[Union[int, str]] = None):
         self.type = type
         self.line = line
         self.value = value
+
 
 # --- Tokenizer ---
 class Tokenizer:
@@ -209,6 +261,10 @@ class Tokenizer:
                     tokens.append(Token(TokenType.FIREWORK, line_count))
                 elif buffer == "Countdown":
                     tokens.append(Token(TokenType.COUNTDOWN, line_count))
+                elif buffer == "Homework":
+                    tokens.append(Token(TokenType.HOMEWORK, line_count))
+                elif buffer == "Next":
+                    tokens.append(Token(TokenType.NEXT, line_count))
                 else:
                     tokens.append(Token(TokenType.IDENT, line_count, buffer))
 
@@ -219,24 +275,32 @@ class Tokenizer:
                     char = self.peek()
                 tokens.append(Token(TokenType.INT_LIT, line_count, int(buffer)))
 
-            elif char in ";=+-*/(){},":
-                tokens.append(Token(getattr(TokenType, {
-                    ";": "SEMI",
-                    "=": "EQ",
-                    "+": "PLUS",
-                    "-": "MINUS",
-                    "*": "STAR",
-                    "/": "FSLASH",
-                    "(": "OPEN_PAREN",
-                    ")": "CLOSE_PAREN",
-                    "{": "OPEN_BRACE",
-                    "}": "CLOSE_BRACE"
-                }[char]), line_count))
-                self.consume()
-
             elif char == "=" and self.peek(1) == "=":
                 tokens.append(Token(TokenType.EQEQ, line_count))
                 self.consume()
+                self.consume()
+
+            elif char in ";=+-*/(){},":
+                tokens.append(
+                    Token(
+                        getattr(
+                            TokenType,
+                            {
+                                ";": "SEMI",
+                                "=": "EQ",
+                                "+": "PLUS",
+                                "-": "MINUS",
+                                "*": "STAR",
+                                "/": "FSLASH",
+                                "(": "OPEN_PAREN",
+                                ")": "CLOSE_PAREN",
+                                "{": "OPEN_BRACE",
+                                "}": "CLOSE_BRACE",
+                            }[char],
+                        ),
+                        line_count,
+                    )
+                )
                 self.consume()
 
             elif char == "!" and self.peek(1) == "=":
@@ -267,16 +331,20 @@ class Tokenizer:
                     line_count += 1
                 self.consume()
             else:
-                print(f"{RED}ERROR: Unexpected character: {char} at line {line_count}{RESET}")
+                print(
+                    f"{RED}ERROR: Unexpected character: {char} at line {line_count}{RESET}"
+                )
                 sys.exit(1)
 
         return tokens
+
 
 # --- Parser ---
 class Parser:
     def __init__(self, tokens: List[Token]):
         self.tokens = tokens
         self.index = 0
+        self.in_loop = 0
 
     def peek(self, offset: int = 0) -> Optional[Token]:
         if self.index + offset >= len(self.tokens):
@@ -297,7 +365,9 @@ class Parser:
         elif token.type == TokenType.OPEN_PAREN:
             expr = self.parse_expr()
             if self.consume().type != TokenType.CLOSE_PAREN:
-                print(f"{RED}ERROR: Expected closing parenthesis at line {token.line}{RESET}")
+                print(
+                    f"{RED}ERROR: Expected closing parenthesis at line {token.line}{RESET}"
+                )
                 sys.exit(1)
             return NodeTermParen(expr)
         else:
@@ -309,8 +379,16 @@ class Parser:
         while True:
             token = self.peek()
             if token and token.type in {
-                TokenType.PLUS, TokenType.MINUS, TokenType.STAR, TokenType.FSLASH, TokenType.GTE,
-                TokenType.EQEQ, TokenType.NEQ, TokenType.LT, TokenType.GT, TokenType.LTE
+                TokenType.PLUS,
+                TokenType.MINUS,
+                TokenType.STAR,
+                TokenType.FSLASH,
+                TokenType.GTE,
+                TokenType.EQEQ,
+                TokenType.NEQ,
+                TokenType.LT,
+                TokenType.GT,
+                TokenType.LTE,
             }:
                 op = self.consume().type
                 rhs = self.parse_term()
@@ -341,7 +419,9 @@ class Parser:
     def parse_block(self) -> List[NodeStmt]:
         stmts = []
         if self.peek() is None or self.peek().type != TokenType.OPEN_BRACE:
-            print(f"{RED}ERROR: Expected opening brace at line {self.peek().line if self.peek() else 'EOF'}{RESET}")
+            print(
+                f"{RED}ERROR: Expected opening brace at line {self.peek().line if self.peek() else 'EOF'}{RESET}"
+            )
             sys.exit(1)
         self.consume()
         while self.peek() is not None and self.peek().type != TokenType.CLOSE_BRACE:
@@ -355,7 +435,9 @@ class Parser:
     def parse_stmt(self) -> NodeStmt:
         token = self.peek()
         if token is None:
-            print(f"{RED}ERROR: Unexpected end of file Firework parsing statement.{RESET}")
+            print(
+                f"{RED}ERROR: Unexpected end of file Firework parsing statement.{RESET}"
+            )
             sys.exit(1)
         if token.type == TokenType.COMMENT:
             return NodeStmtComment(self.consume().value)
@@ -363,31 +445,43 @@ class Parser:
             self.consume()
             ident = self.consume()
             if ident.type != TokenType.IDENT:
-                print(f"{RED}ERROR: Expected identifier after 'Peachblossom' at line {ident.line}{RESET}")
+                print(
+                    f"{RED}ERROR: Expected identifier after 'Peachblossom' at line {ident.line}{RESET}"
+                )
                 sys.exit(1)
             if self.consume().type != TokenType.EQ:
-                print(f"{RED}ERROR: Expected '=' after identifier at line {ident.line}{RESET}")
+                print(
+                    f"{RED}ERROR: Expected '=' after identifier at line {ident.line}{RESET}"
+                )
                 sys.exit(1)
             expr = self.parse_expr()
             if self.consume().type != TokenType.SEMI:
-                print(f"{RED}ERROR: Expected ';' at the end of statement at line {ident.line}{RESET}")
+                print(
+                    f"{RED}ERROR: Expected ';' at the end of statement at line {ident.line}{RESET}"
+                )
                 sys.exit(1)
             return NodeStmtPeachblossom(ident.value, expr)
         elif token.type == TokenType.HAPPYNEWYEAR:
             self.consume()
             expr = self.parse_expr()
             if self.consume().type != TokenType.SEMI:
-                print(f"{RED}ERROR: Expected ';' at the end of statement at line {token.line}{RESET}")
+                print(
+                    f"{RED}ERROR: Expected ';' at the end of statement at line {token.line}{RESET}"
+                )
                 sys.exit(1)
             return NodeStmtHappynewyear(expr)
         elif token.type == TokenType.IDENT:
             ident = self.consume().value
             if self.consume().type != TokenType.EQ:
-                print(f"{RED}ERROR: Expected '=' after identifier at line {token.line}{RESET}")
+                print(
+                    f"{RED}ERROR: Expected '=' after identifier at line {token.line}{RESET}"
+                )
                 sys.exit(1)
             expr = self.parse_expr()
             if self.consume().type != TokenType.SEMI:
-                print(f"{RED}ERROR: Expected ';' at the end of statement at line {token.line}{RESET}")
+                print(
+                    f"{RED}ERROR: Expected ';' at the end of statement at line {token.line}{RESET}"
+                )
                 sys.exit(1)
             return NodeStmtPeachblossom(ident, expr)
         elif token.type == TokenType.CARAMELIZEDPORKANDEGGS:
@@ -401,19 +495,49 @@ class Parser:
             return NodeStmtCaramelizedporkandeggs(condition, true_block, false_block)
         elif token.type == TokenType.FIREWORK:
             self.consume()
+            self.in_loop += 1
             condition = self.parse_expr()
             block = self.parse_block()
+            self.in_loop -= 1
             return NodeStmtFirework(condition, block)
         elif token.type == TokenType.COUNTDOWN:
             self.consume()
+            self.in_loop += 1
             init = self.parse_stmt()
             condition = self.parse_expr()
             if self.consume().type != TokenType.SEMI:
-                print(f"{RED}ERROR: Expected ';' after Countdown loop condition at line {token.line}{RESET}")
+                print(
+                    f"{RED}ERROR: Expected ';' after Countdown loop condition at line {token.line}{RESET}"
+                )
                 sys.exit(1)
             update = self.parse_stmt()
             block = self.parse_block()
+            self.in_loop -= 1
             return NodeStmtCountdown(init, condition, update, block)
+        elif token.type == TokenType.HOMEWORK:
+            if self.in_loop == 0:
+                print(
+                    f"{RED}ERROR: 'Homework' not within loop at line {token.line}{RESET}"
+                )
+                sys.exit(1)
+            self.consume()
+            if self.consume().type != TokenType.SEMI:
+                print(
+                    f"{RED}ERROR: Expected ';' after 'Homework' at line {token.line}{RESET}"
+                )
+                sys.exit(1)
+            return NodeStmtHomework()
+        elif token.type == TokenType.NEXT:
+            if self.in_loop == 0:
+                print(f"{RED}ERROR: 'Next' not within loop at line {token.line}{RESET}")
+                sys.exit(1)
+            self.consume()
+            if self.consume().type != TokenType.SEMI:
+                print(
+                    f"{RED}ERROR: Expected ';' after 'Next' at line {token.line}{RESET}"
+                )
+                sys.exit(1)
+            return NodeStmtNext()
         else:
             print(f"{RED}ERROR: Unexpected statement at line {token.line}{RESET}")
             sys.exit(1)
@@ -424,6 +548,7 @@ class Parser:
             stmts.append(self.parse_stmt())
         return NodeProg(stmts)
 
+
 # --- Generator ---
 class Generator:
     def __init__(self, prog: NodeProg):
@@ -433,6 +558,7 @@ class Generator:
         self.m_vars = []
         self.m_scopes = []
         self.m_label_count = 0
+        self.m_label_stack = []
 
     def push(self, reg: str):
         self.m_output.append(f"\tpush {reg}")
@@ -450,7 +576,7 @@ class Generator:
         if pop_count != 0:
             self.m_output.append(f"\tadd rsp, {pop_count * 8}")
         self.m_stack_size -= pop_count
-        self.m_vars = self.m_vars[:len(self.m_vars) - pop_count]
+        self.m_vars = self.m_vars[: len(self.m_vars) - pop_count]
 
     def gen_term(self, term: NodeTerm):
         if isinstance(term, NodeTermIntLit):
@@ -513,6 +639,7 @@ class Generator:
             self.gen_term(expr)
         elif isinstance(expr, NodeBinExpr):
             self.gen_bin_expr(expr)
+
     def gen_stmt(self, stmt: NodeStmt):
         if isinstance(stmt, NodeStmtComment):
             self.m_output.append(f"\t; {stmt.content}")
@@ -552,6 +679,7 @@ class Generator:
         elif isinstance(stmt, NodeStmtFirework):
             label_start = f".L_firework_start_{self.m_label_count}"
             label_end = f".L_firework_end_{self.m_label_count}"
+            self.m_label_stack.append((label_start, label_end))
             self.m_label_count += 1
             self.m_output.append(f"{label_start}:")
             self.gen_expr(stmt.condition)
@@ -568,6 +696,7 @@ class Generator:
             self.gen_stmt(stmt.init)
             label_start = f".L_countdown_start_{self.m_label_count}"
             label_end = f".L_countdown_end_{self.m_label_count}"
+            self.m_label_stack.append((label_start, label_end))
             self.m_label_count += 1
             self.m_output.append(f"{label_start}:")
             self.gen_expr(stmt.condition)
@@ -581,6 +710,16 @@ class Generator:
             self.gen_stmt(stmt.update)
             self.m_output.append(f"\tjmp {label_start}")
             self.m_output.append(f"{label_end}:")
+        elif isinstance(stmt, NodeStmtNext):
+            if not self.m_label_stack:
+                raise RuntimeError("No enclosing loop for 'Next'")
+            label_start, _ = self.m_label_stack[-1]
+            self.m_output.append(f"\tjmp {label_start}")
+        elif isinstance(stmt, NodeStmtHomework):
+            if not self.m_label_stack:
+                raise RuntimeError("No enclosing loop for 'Homework'")
+            _, label_end = self.m_label_stack[-1]
+            self.m_output.append(f"\tjmp {label_end}")
 
     def gen_prog(self) -> str:
         self.m_output.append("extern ExitProcess")
@@ -593,6 +732,7 @@ class Generator:
             self.m_output.append("\txor rcx, rcx")
             self.m_output.append("\tcall ExitProcess\n")
         return "\n".join(self.m_output)
+
 
 # --- Main Program ---
 if platform.system() != "Windows":
@@ -634,16 +774,20 @@ if len(sys.argv) == 3:
     if sys.argv[2] == "--asm":
         generator = Generator(prog)
         assembly_code = generator.gen_prog()
-        with open(os.path.join(output_dir, filename + ".asm"), "w", encoding="utf-8") as f:
+        with open(
+            os.path.join(output_dir, filename + ".asm"), "w", encoding="utf-8"
+        ) as f:
             f.write(assembly_code)
         sys.exit(0)
     elif sys.argv[2] == "--help":
         print(f"{GREEN}Help Menu:{RESET}")
         print(f"  {GREEN}--asm{RESET}          Generates assembly code from the source")
         print(f"  {GREEN}--version{RESET}      Displays the version of the compiler")
-        print(f"  {GREEN}--help{RESET}         Displays this help menu and exits") 
+        print(f"  {GREEN}--help{RESET}         Displays this help menu and exits")
     else:
-        print(f"{RED}ERROR: Unknown argument: \"{sys.argv[2]}\"{RESET}\nUse --help for more information")
+        print(
+            f'{RED}ERROR: Unknown argument: "{sys.argv[2]}"{RESET}\nUse --help for more information'
+        )
 
 # Generate Assembly
 generator = Generator(prog)
@@ -654,6 +798,15 @@ with open(os.path.join(output_dir, filename + ".asm"), "w", encoding="utf-8") as
     f.write(assembly_code)
 
 subprocess.run(["nasm", "-f", "win64", os.path.join(output_dir, filename + ".asm")])
-subprocess.run(["gcc", "-o", os.path.join(output_dir, filename + ".exe"), os.path.join(output_dir, filename + ".obj")])
-result = subprocess.run(os.path.join(output_dir, filename + ".exe"), capture_output=True, text=True)
+subprocess.run(
+    [
+        "gcc",
+        "-o",
+        os.path.join(output_dir, filename + ".exe"),
+        os.path.join(output_dir, filename + ".obj"),
+    ]
+)
+result = subprocess.run(
+    os.path.join(output_dir, filename + ".exe"), capture_output=True, text=True
+)
 print(result.returncode)
