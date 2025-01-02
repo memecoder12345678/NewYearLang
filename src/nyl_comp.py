@@ -2,12 +2,14 @@
 #                      NewYearLang                      #
 #       Author: MemeCoder (memecoder17@gmail.com)       #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-from typing import List, Optional, Union
-import subprocess
 import os
-import sys
 import platform
+import subprocess
+import sys
+from typing import List, Optional, Union
+
 import colorama
+
 colorama.init(autoreset=True)
 have_happynewyear = False
 RED = colorama.Fore.LIGHTRED_EX
