@@ -7,15 +7,13 @@ import subprocess
 import os
 import sys
 import platform
-
+import colorama
+colorama.init(autoreset=True)
 have_happynewyear = False
-RED = "\033[91m"
-GREEN = "\033[92m"
-YELLOW = "\033[93m"
-BLUE = "\033[94m"
-MAGENTA = "\033[95m"
-CYAN = "\033[96m"
-RESET = "\033[0m"
+RED = colorama.Fore.LIGHTRED_EX
+GREEN = colorama.Fore.LIGHTGREEN_EX
+CYAN = colorama.Fore.LIGHTCYAN_EX
+RESET = colorama.Fore.RESET
 
 
 class Node:
@@ -690,7 +688,7 @@ if platform.machine().lower() != "amd64":
     sys.exit(1)
 if len(sys.argv) == 2 or len(sys.argv) == 3:
     if sys.argv[1] == "--version":
-        print(f"{CYAN}TH-Script Compiler 1.0.0{RESET}")
+        print(f"{CYAN}NewYearLang Compiler 1.0.0{RESET}")
         sys.exit(0)
     path = os.path.dirname(sys.argv[1])
     filename = os.path.basename(sys.argv[1]).rsplit(".", 1)[0]
