@@ -3,7 +3,7 @@
 <Prog> ::= <Stmt>* 
 
 <Stmt> ::= 
-    "Happynewyear" <Ident> ";"                                     // return
+    "Happynewyear" <Ident> ";"                                     // print out the value of the variable
     | "Peachblossom" <Ident> "=" <Expr> ";"                        // var
     | "Caramelizedporkandeggs" <Expr> "{" <Scope> "}"              // if
     | "Firework" <Expr> "{" <Scope> "}"                            // while
@@ -40,8 +40,6 @@
 
 <Ident> ::= [a-zA-Z_][a-zA-Z0-9_]*
 ```
-The `Happynewyear` statement returns the value as an exit code. These exit codes can be accessed through system commands such as `echo $LASTEXITCODE` or `echo %errorlevel%`.
-
 Requirement: `Python`, `Nasm`, `Gcc`
 
 **🎆 Happy New Year 2025 🎇**
