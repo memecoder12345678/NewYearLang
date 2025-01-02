@@ -1,4 +1,4 @@
-# NewYear-Lang
+# NewYearLang
 ```plain text
 <Prog> ::= <Stmt>* 
 
@@ -8,9 +8,7 @@
     | "Caramelizedporkandeggs" <Expr> "{" <Scope> "}"              // if
     | "Firework" <Expr> "{" <Scope> "}"                            // while
     | "Countdown" <ForInit> <Expr> ";" <ForUpdate> "{" <Scope> "}" // for
-    | "Nextyear;"                                                  // continue
-    | "Homework;"                                                  // break
-    | "@" <Comment>                                                // comment
+    | "#" <Comment>                                                // comment
 
 <ForInit> ::= "Peachblossom" <Ident> "=" <Expr> ";"
 
