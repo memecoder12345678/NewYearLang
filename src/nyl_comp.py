@@ -743,17 +743,28 @@ assembly_code = generator.gen_prog()
 # Output
 with open(os.path.join(output_dir, filename + ".asm"), "w", encoding="utf-8") as f:
     f.write(assembly_code)
-
-subprocess.run(["nasm", "-f", "win64", os.path.join(output_dir, filename + ".asm")])
-subprocess.run(
-    [
-        "gcc",
-        "-o",
-        os.path.join(output_dir, filename + ".exe"),
-        os.path.join(output_dir, filename + ".obj"),
-    ]
-)
-result = subprocess.run(
-    os.path.join(output_dir, filename + ".exe"), capture_output=True, text=True
-)
-print(result.returncode)
+try:
+    subprocess.run(
+        ["nasm", "-f", "win64", os.path.join(output_dir, filename + ".asm")], check=True
+    )
+    subprocess.run(
+        [
+            "gcc",
+            "-o",
+            os.path.join(output_dir, filename + ".exe"),
+            os.path.join(output_dir, filename + ".obj"),
+        ],
+        check=True,
+    )
+    result = subprocess.run(
+        os.path.join(output_dir, filename + ".exe"), capture_output=True, text=True
+    )
+    print(result.returncode)
+except subprocess.CalledProcessError as e:
+    print(
+        f"{RED}COMPILER ERROR: Command '{e.cmd}' failed with return code {e.returncode}{RESET}"
+    )
+except FileNotFoundError as e:
+    print(f"{RED}COMPILER ERROR: File not found - {e.filename}{RESET}")
+except Exception as e:
+    print(f"{RED}COMPILER ERROR: {e}{RESET}")
