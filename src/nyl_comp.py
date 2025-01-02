@@ -11,7 +11,6 @@ from typing import List, Optional, Union
 import colorama
 
 colorama.init(autoreset=True)
-have_happynewyear = False
 RED = colorama.Fore.LIGHTRED_EX
 GREEN = colorama.Fore.LIGHTGREEN_EX
 CYAN = colorama.Fore.LIGHTCYAN_EX
@@ -214,7 +213,6 @@ class Tokenizer:
         return char
 
     def tokenize(self) -> List[Token]:
-        global have_happynewyear
         tokens = []
         line_count = 1
 
@@ -239,7 +237,6 @@ class Tokenizer:
                     buffer += self.consume()
                     char = self.peek()
                 if buffer == "Happynewyear":
-                    have_happynewyear = True
                     tokens.append(Token(TokenType.HAPPYNEWYEAR, line_count))
                 elif buffer == "Peachblossom":
                     tokens.append(Token(TokenType.PEACHBLOSSOM, line_count))
@@ -604,8 +601,9 @@ class Generator:
             self.m_output.append(f"\t; {stmt.content}")
         elif isinstance(stmt, NodeStmtHappynewyear):
             self.gen_expr(stmt.expr)
-            self.m_output.append("\tmov rcx, rax")
-            self.m_output.append("\tcall ExitProcess")
+            self.m_output.append("\tlea rcx, [fmt]")
+            self.m_output.append("\tmov rdx, rax")
+            self.m_output.append("\tcall printf")
         elif isinstance(stmt, NodeStmtPeachblossom):
             self.gen_expr(stmt.expr)
             for var in self.m_vars:
@@ -669,15 +667,19 @@ class Generator:
             self.m_output.append(f"{label_end}:")
 
     def gen_prog(self) -> str:
-        self.m_output.append("extern ExitProcess")
+        self.m_output.append("bits 64")
+        self.m_output.append("default rel")
+        self.m_output.append("section .data")
+        self.m_output.append("\tfmt db \"%d\", 10, 0")
         self.m_output.append("section .text")
-        self.m_output.append("global main")
+        self.m_output.append("\tglobal main")
+        self.m_output.append("\textern ExitProcess")
+        self.m_output.append("\textern printf")
         self.m_output.append("main:")
         for stmt in self.m_prog.stmts:
             self.gen_stmt(stmt)
-        if not have_happynewyear:
-            self.m_output.append("\txor rcx, rcx")
-            self.m_output.append("\tcall ExitProcess\n")
+        self.m_output.append("\txor rcx, rcx")
+        self.m_output.append("\tcall ExitProcess\n")
         return "\n".join(self.m_output)
 
 
