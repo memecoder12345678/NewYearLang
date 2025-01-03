@@ -3,7 +3,7 @@
 <Prog> ::= <Stmt>* 
 
 <Stmt> ::= 
-    "Happynewyear" <Ident> ";"                                     // print out the value of the variable
+    "Happynewyear" <Expr> ";"                                      // print
     | "Peachblossom" <Ident> "=" <Expr> ";"                        // var
     | "Caramelizedporkandeggs" <Expr> "{" <Scope> "}"              // if
     | "Firework" <Expr> "{" <Scope> "}"                            // while
