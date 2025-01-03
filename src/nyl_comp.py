@@ -443,6 +443,9 @@ class Parser:
                 sys.exit(1)
             return NodeStmtPeachblossom(ident.value, expr)
         elif token.type == TokenType.HAPPYNEWYEAR:
+            if self.in_loop > 0:
+                print(f"{RED}LIMITED FEATURES: 'Happynewyear' statement is not allowed inside loops at line {token.line}{RESET}")
+                sys.exit(1)
             self.consume()
             expr = self.parse_expr()
             if self.consume().type != TokenType.SEMI:
