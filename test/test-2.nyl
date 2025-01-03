@@ -1,0 +1,29 @@
+# Happy new year 2025
+Happynewyear 5;
+Peachblossom sum = 100000000;
+Firework sum > 0 {
+    Peachblossom sum = sum - 1;
+}
+Happynewyear 4;
+Peachblossom sum = 100000000;
+Firework sum > 0 {
+    Peachblossom sum = sum - 1;
+}
+Happynewyear 3;
+Peachblossom sum = 100000000;
+Firework sum > 0 {
+    Peachblossom sum = sum - 1;
+}
+Happynewyear 2;
+Peachblossom sum = 100000000;
+Firework sum > 0 {
+    Peachblossom sum = sum - 1;
+}
+Happynewyear 1;
+Peachblossom sum = 100000000;
+Firework sum > 0 {
+    Peachblossom sum = sum - 1;
+}
+Happynewyear 2025;
+
+
