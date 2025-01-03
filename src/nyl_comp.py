@@ -758,10 +758,7 @@ try:
         ],
         check=True,
     )
-    result = subprocess.run(
-        os.path.join(output_dir, filename + ".exe"), capture_output=True, text=True
-    )
-    print(result.returncode)
+    os.system(os.path.join(output_dir, filename + ".exe"))
 except subprocess.CalledProcessError as e:
     print(
         f"{RED}COMPILER ERROR: Command '{e.cmd}' failed with return code {e.returncode}{RESET}"
