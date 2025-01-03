@@ -600,10 +600,12 @@ class Generator:
         if isinstance(stmt, NodeStmtComment):
             self.m_output.append(f"\t; {stmt.content}")
         elif isinstance(stmt, NodeStmtHappynewyear):
+            self.m_output.append("\tsub rsp, 40")
             self.gen_expr(stmt.expr)
-            self.m_output.append("\tlea rcx, [fmt]")
-            self.m_output.append("\tmov rdx, rax")
+            self.pop("rdx")
+            self.m_output.append("\tlea rcx, [rel fmt]")
             self.m_output.append("\tcall printf")
+            self.m_output.append("\tadd rsp, 40")
         elif isinstance(stmt, NodeStmtPeachblossom):
             self.gen_expr(stmt.expr)
             for var in self.m_vars:
