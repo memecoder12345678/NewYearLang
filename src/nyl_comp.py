@@ -8,6 +8,7 @@ import subprocess
 import sys
 from typing import List, Optional, Union
 
+import click
 import colorama
 
 colorama.init(autoreset=True)
@@ -163,31 +164,31 @@ class NodeProg:
 
 # --- Token Definitions ---
 class TokenType:
-    HAPPYNEWYEAR = 'happynewyear'
-    INT_LIT = 'int_lit'
-    SEMI = ';'
-    IDENT = 'ident'
-    PEACHBLOSSOM = 'Peachblossom'
-    EQ = '='
-    PLUS = '+'
-    STAR = '*'
-    MINUS = '-'
-    FSLASH = '/'
-    OPEN_PAREN = '('
-    CLOSE_PAREN = ')'
-    COMMENT = 'comment'
-    CARAMELIZEDPORKANDEGGS = 'Caramelizedporkandeggs'
-    CHUNGCAKE = 'Chungcake'
-    FIREWORK = 'Firework'
-    COUNTDOWN = 'Countdown'
-    OPEN_BRACE = '{'
-    CLOSE_BRACE = '}'
-    EQEQ = '=='
-    NEQ = '!='
-    LT = '<'
-    GT = '>'
-    LTE = '<='
-    GTE = '>='
+    HAPPYNEWYEAR = "happynewyear"
+    INT_LIT = "int_lit"
+    SEMI = ";"
+    IDENT = "ident"
+    PEACHBLOSSOM = "Peachblossom"
+    EQ = "="
+    PLUS = "+"
+    STAR = "*"
+    MINUS = "-"
+    FSLASH = "/"
+    OPEN_PAREN = "("
+    CLOSE_PAREN = ")"
+    COMMENT = "comment"
+    CARAMELIZEDPORKANDEGGS = "Caramelizedporkandeggs"
+    CHUNGCAKE = "Chungcake"
+    FIREWORK = "Firework"
+    COUNTDOWN = "Countdown"
+    OPEN_BRACE = "{"
+    CLOSE_BRACE = "}"
+    EQEQ = "=="
+    NEQ = "!="
+    LT = "<"
+    GT = ">"
+    LTE = "<="
+    GTE = ">="
 
 
 class Token:
@@ -220,66 +221,66 @@ class Tokenizer:
         while self.index < len(self.src):
             char = self.peek()
 
-            if char == '#':
+            if char == "#":
                 self.consume()
                 char = self.peek()
-                while char and char in ' \t':
+                while char and char in " \t":
                     self.consume()
                     char = self.peek()
-                comment = ''
-                while char and char != '\n':
+                comment = ""
+                while char and char != "\n":
                     comment += self.consume()
                     char = self.peek()
                 tokens.append(Token(TokenType.COMMENT, line_count, comment))
 
             elif char.isalpha():
-                buffer = ''
+                buffer = ""
                 while char and char.isalnum():
                     buffer += self.consume()
                     char = self.peek()
-                if buffer == 'Happynewyear':
+                if buffer == "Happynewyear":
                     tokens.append(Token(TokenType.HAPPYNEWYEAR, line_count))
-                elif buffer == 'Peachblossom':
+                elif buffer == "Peachblossom":
                     tokens.append(Token(TokenType.PEACHBLOSSOM, line_count))
-                elif buffer == 'Caramelizedporkandeggs':
+                elif buffer == "Caramelizedporkandeggs":
                     tokens.append(Token(TokenType.CARAMELIZEDPORKANDEGGS, line_count))
-                elif buffer == 'Chungcake':
+                elif buffer == "Chungcake":
                     tokens.append(Token(TokenType.CHUNGCAKE, line_count))
-                elif buffer == 'Firework':
+                elif buffer == "Firework":
                     tokens.append(Token(TokenType.FIREWORK, line_count))
-                elif buffer == 'Countdown':
+                elif buffer == "Countdown":
                     tokens.append(Token(TokenType.COUNTDOWN, line_count))
                 else:
                     tokens.append(Token(TokenType.IDENT, line_count, buffer))
 
             elif char.isdigit():
-                buffer = ''
+                buffer = ""
                 while char and char.isdigit():
                     buffer += self.consume()
                     char = self.peek()
                 tokens.append(Token(TokenType.INT_LIT, line_count, int(buffer)))
 
-            elif char == '=' and self.peek(1) == '=':
+            elif char == "=" and self.peek(1) == "=":
                 tokens.append(Token(TokenType.EQEQ, line_count))
                 self.consume()
                 self.consume()
 
-            elif char in ';=+-*/(){},':
+            elif char in ";=+-*/(){},":
                 tokens.append(
                     Token(
                         getattr(
                             TokenType,
                             {
-                                ';': 'SEMI',
-                                '=': 'EQ',
-                                '+': 'PLUS',
-                                '-': 'MINUS',
-                                '*': 'STAR',
-                                '/': 'FSLASH',
-                                '(': 'OPEN_PAREN',
-                                ')': 'CLOSE_PAREN',
-                                '{': 'OPEN_BRACE',
-                                '}': 'CLOSE_BRACE',
+                                ";": "SEMI",
+                                "=": "EQ",
+                                "+": "PLUS",
+                                "-": "MINUS",
+                                "*": "STAR",
+                                "/": "FSLASH",
+                                "(": "OPEN_PAREN",
+                                ")": "CLOSE_PAREN",
+                                "{": "OPEN_BRACE",
+                                "}": "CLOSE_BRACE",
                             }[char],
                         ),
                         line_count,
@@ -287,13 +288,13 @@ class Tokenizer:
                 )
                 self.consume()
 
-            elif char == '!' and self.peek(1) == '=':
+            elif char == "!" and self.peek(1) == "=":
                 tokens.append(Token(TokenType.NEQ, line_count))
                 self.consume()
                 self.consume()
 
-            elif char == '<':
-                if self.peek(1) == '=':
+            elif char == "<":
+                if self.peek(1) == "=":
                     tokens.append(Token(TokenType.LTE, line_count))
                     self.consume()
                     self.consume()
@@ -301,8 +302,8 @@ class Tokenizer:
                     tokens.append(Token(TokenType.LT, line_count))
                     self.consume()
 
-            elif char == '>':
-                if self.peek(1) == '=':
+            elif char == ">":
+                if self.peek(1) == "=":
                     tokens.append(Token(TokenType.GTE, line_count))
                     self.consume()
                     self.consume()
@@ -311,12 +312,12 @@ class Tokenizer:
                     self.consume()
 
             elif char.isspace():
-                if char == '\n':
+                if char == "\n":
                     line_count += 1
                 self.consume()
             else:
                 print(
-                    f'{RED}ERROR: Unexpected character - {char} at line {line_count}{RESET}'
+                    f"{RED}ERROR: Unexpected character - {char} at line {line_count}{RESET}"
                 )
                 sys.exit(1)
 
@@ -337,7 +338,7 @@ class Parser:
 
     def consume(self) -> Token:
         if self.index >= len(self.tokens):
-            print(f'{RED}ERROR: Unexpected end of input - expected more tokens{RESET}')
+            print(f"{RED}ERROR: Unexpected end of input - expected more tokens{RESET}")
             sys.exit(1)
         token = self.tokens[self.index]
         self.index += 1
@@ -353,12 +354,12 @@ class Parser:
             expr = self.parse_expr()
             if self.consume().type != TokenType.CLOSE_PAREN:
                 print(
-                    f'{RED}ERROR: Expected closing parenthesis at line {token.line}{RESET}'
+                    f"{RED}ERROR: Expected closing parenthesis at line {token.line}{RESET}"
                 )
                 sys.exit(1)
             return NodeTermParen(expr)
         else:
-            print(f'{RED}ERROR: Unexpected token in term at line {token.line}{RESET}')
+            print(f"{RED}ERROR: Unexpected token in term at line {token.line}{RESET}")
             sys.exit(1)
 
     def parse_expr(self) -> NodeExpr:
@@ -407,14 +408,14 @@ class Parser:
         stmts = []
         if self.peek() is None or self.peek().type != TokenType.OPEN_BRACE:
             print(
-                f'{RED}ERROR: Expected opening brace at line {self.peek().line if self.peek() else 'EOF'}{RESET}'
+                f"{RED}ERROR: Expected opening brace at line {self.peek().line if self.peek() else 'EOF'}{RESET}"
             )
             sys.exit(1)
         self.consume()
         while self.peek() is not None and self.peek().type != TokenType.CLOSE_BRACE:
             stmts.append(self.parse_stmt())
         if self.peek() is None:
-            print(f'{RED}ERROR: Unexpected end of file. Expected closing brace.{RESET}')
+            print(f"{RED}ERROR: Unexpected end of file. Expected closing brace.{RESET}")
             sys.exit(1)
         self.consume()
         return stmts
@@ -422,7 +423,7 @@ class Parser:
     def parse_stmt(self) -> NodeStmt:
         token = self.peek()
         if token is None:
-            print(f'{RED}ERROR: Unexpected end of file while parsing statement.{RESET}')
+            print(f"{RED}ERROR: Unexpected end of file while parsing statement.{RESET}")
             sys.exit(1)
         if token.type == TokenType.COMMENT:
             return NodeStmtComment(self.consume().value)
@@ -505,7 +506,7 @@ class Parser:
             self.in_loop -= 1
             return NodeStmtCountdown(init, condition, update, block)
         else:
-            print(f'{RED}ERROR: Unexpected statement at line {token.line}{RESET}')
+            print(f"{RED}ERROR: Unexpected statement at line {token.line}{RESET}")
             sys.exit(1)
 
     def parse_prog(self) -> NodeProg:
@@ -526,11 +527,11 @@ class Generator:
         self.m_label_count = 0
 
     def push(self, reg: str):
-        self.m_output.append(f'\tpush {reg}')
+        self.m_output.append(f"push {reg}")
         self.m_stack_size += 1
 
     def pop(self, reg: str):
-        self.m_output.append(f'\tpop {reg}')
+        self.m_output.append(f"pop {reg}")
         self.m_stack_size -= 1
 
     def begin_scope(self):
@@ -539,22 +540,22 @@ class Generator:
     def end_scope(self):
         pop_count = len(self.m_vars) - self.m_scopes.pop()
         if pop_count != 0:
-            self.m_output.append(f'\tadd rsp, {pop_count * 8}')
+            self.m_output.append(f"add rsp, {pop_count * 8}")
         self.m_stack_size -= pop_count
         self.m_vars = self.m_vars[: len(self.m_vars) - pop_count]
 
     def gen_term(self, term: NodeTerm):
         if isinstance(term, NodeTermIntLit):
-            self.m_output.append(f'\tmov rax, {term.value}')
-            self.push('rax')
+            self.m_output.append(f"mov rax, {term.value}")
+            self.push("rax")
         elif isinstance(term, NodeTermIdent):
             for var in self.m_vars:
-                if var['name'] == term.value:
-                    offset = f'[rsp + {(self.m_stack_size - var['stack_loc'] - 1) * 8}]'
-                    self.m_output.append(f'\tmov rax, {offset}')
-                    self.push('rax')
+                if var["name"] == term.value:
+                    offset = f"[rsp + {(self.m_stack_size - var['stack_loc'] - 1) * 8}]"
+                    self.m_output.append(f"mov rax, {offset}")
+                    self.push("rax")
                     return
-            print(f'{RED}ERROR: Undeclared identifier - {term.value}{RESET}')
+            print(f"{RED}ERROR: Undeclared identifier - {term.value}{RESET}")
             sys.exit(1)
         elif isinstance(term, NodeTermParen):
             self.gen_expr(term.expr)
@@ -562,42 +563,42 @@ class Generator:
     def gen_bin_expr(self, bin_expr: NodeBinExpr):
         self.gen_expr(bin_expr.rhs)
         self.gen_expr(bin_expr.lhs)
-        self.pop('rax')
-        self.pop('rbx')
+        self.pop("rax")
+        self.pop("rbx")
         if isinstance(bin_expr, NodeBinExprAdd):
-            self.m_output.append('\tadd rax, rbx')
+            self.m_output.append("add rax, rbx")
         elif isinstance(bin_expr, NodeBinExprSub):
-            self.m_output.append('\tsub rax, rbx')
+            self.m_output.append("sub rax, rbx")
         elif isinstance(bin_expr, NodeBinExprMulti):
-            self.m_output.append('\timul rbx')
+            self.m_output.append("imul rbx")
         elif isinstance(bin_expr, NodeBinExprDiv):
-            self.m_output.append('\txor rdx, rdx')
-            self.m_output.append('\tidiv rbx')
+            self.m_output.append("xor rdx, rdx")
+            self.m_output.append("idiv rbx")
         elif isinstance(bin_expr, NodeBinExprEq):
-            self.m_output.append('\tcmp rax, rbx')
-            self.m_output.append('\tsete al')
-            self.m_output.append('\tmovzx rax, al')
+            self.m_output.append("cmp rax, rbx")
+            self.m_output.append("sete al")
+            self.m_output.append("movzx rax, al")
         elif isinstance(bin_expr, NodeBinExprNeq):
-            self.m_output.append('\tcmp rax, rbx')
-            self.m_output.append('\tsetne al')
-            self.m_output.append('\tmovzx rax, al')
+            self.m_output.append("cmp rax, rbx")
+            self.m_output.append("setne al")
+            self.m_output.append("movzx rax, al")
         elif isinstance(bin_expr, NodeBinExprLt):
-            self.m_output.append('\tcmp rax, rbx')
-            self.m_output.append('\tsetl al')
-            self.m_output.append('\tmovzx rax, al')
+            self.m_output.append("cmp rax, rbx")
+            self.m_output.append("setl al")
+            self.m_output.append("movzx rax, al")
         elif isinstance(bin_expr, NodeBinExprGt):
-            self.m_output.append('\tcmp rax, rbx')
-            self.m_output.append('\tsetg al')
-            self.m_output.append('\tmovzx rax, al')
+            self.m_output.append("cmp rax, rbx")
+            self.m_output.append("setg al")
+            self.m_output.append("movzx rax, al")
         elif isinstance(bin_expr, NodeBinExprLte):
-            self.m_output.append('\tcmp rax, rbx')
-            self.m_output.append('\tsetle al')
-            self.m_output.append('\tmovzx rax, al')
+            self.m_output.append("cmp rax, rbx")
+            self.m_output.append("setle al")
+            self.m_output.append("movzx rax, al")
         elif isinstance(bin_expr, NodeBinExprGte):
-            self.m_output.append('\tcmp rax, rbx')
-            self.m_output.append('\tsetge al')
-            self.m_output.append('\tmovzx rax, al')
-        self.push('rax')
+            self.m_output.append("cmp rax, rbx")
+            self.m_output.append("setge al")
+            self.m_output.append("movzx rax, al")
+        self.push("rax")
 
     def gen_expr(self, expr: NodeExpr):
         if isinstance(expr, NodeTerm):
@@ -607,84 +608,84 @@ class Generator:
 
     def gen_stmt(self, stmt: NodeStmt):
         if isinstance(stmt, NodeStmtComment):
-            self.m_output.append(f'\t; {stmt.content}')
+            self.m_output.append(f"; {stmt.content}")
         elif isinstance(stmt, NodeStmtHappynewyear):
-            self.m_output.append('\tsub rsp, 40')
+            self.m_output.append("sub rsp, 40")
             self.gen_expr(stmt.expr)
-            self.pop('rdx')
-            self.m_output.append('\tlea rcx, [rel fmt]')
-            self.m_output.append('\tcall printf')
-            self.m_output.append('\tadd rsp, 40')
+            self.pop("rdx")
+            self.m_output.append("lea rcx, [rel fmt]")
+            self.m_output.append("call printf")
+            self.m_output.append("add rsp, 40")
         elif isinstance(stmt, NodeStmtPeachblossom):
             self.gen_expr(stmt.expr)
             for var in self.m_vars:
-                if var['name'] == stmt.ident:
-                    self.pop('rax')
-                    offset = f'[rsp + {(self.m_stack_size - var['stack_loc'] - 1) * 8}]'
-                    self.m_output.append(f'\tmov {offset}, rax')
+                if var["name"] == stmt.ident:
+                    self.pop("rax")
+                    offset = f"[rsp + {(self.m_stack_size - var['stack_loc'] - 1) * 8}]"
+                    self.m_output.append(f"mov {offset}, rax")
                     return
-            self.m_vars.append({'name': stmt.ident, 'stack_loc': self.m_stack_size - 1})
+            self.m_vars.append({"name": stmt.ident, "stack_loc": self.m_stack_size - 1})
         elif isinstance(stmt, NodeStmtCaramelizedporkandeggs):
             self.gen_expr(stmt.condition)
-            self.pop('rax')
-            self.m_output.append('\tcmp rax, 0')
-            label_chungcake = f'.L_chungcake_{self.m_label_count}'
-            label_end = f'.L_end_{self.m_label_count}'
+            self.pop("rax")
+            self.m_output.append("cmp rax, 0")
+            label_chungcake = f".L_chungcake_{self.m_label_count}"
+            label_end = f".L_end_{self.m_label_count}"
             self.m_label_count += 1
-            self.m_output.append(f'\tje {label_chungcake}')
+            self.m_output.append(f"je {label_chungcake}")
             self.begin_scope()
             for s in stmt.true_block:
                 self.gen_stmt(s)
             self.end_scope()
-            self.m_output.append(f'\tjmp {label_end}')
-            self.m_output.append(f'{label_chungcake}:')
+            self.m_output.append(f"jmp {label_end}")
+            self.m_output.append(f"{label_chungcake}:")
             if stmt.false_block:
                 self.begin_scope()
                 for s in stmt.false_block:
                     self.gen_stmt(s)
                 self.end_scope()
-            self.m_output.append(f'{label_end}:')
+            self.m_output.append(f"{label_end}:")
         elif isinstance(stmt, NodeStmtFirework):
-            label_start = f'.L_firework_start_{self.m_label_count}'
-            label_end = f'.L_firework_end_{self.m_label_count}'
+            label_start = f".L_firework_start_{self.m_label_count}"
+            label_end = f".L_firework_end_{self.m_label_count}"
             self.m_label_count += 1
-            self.m_output.append(f'{label_start}:')
+            self.m_output.append(f"{label_start}:")
             self.gen_expr(stmt.condition)
-            self.pop('rax')
-            self.m_output.append('\tcmp rax, 0')
-            self.m_output.append(f'\tje {label_end}')
+            self.pop("rax")
+            self.m_output.append("cmp rax, 0")
+            self.m_output.append(f"je {label_end}")
             self.begin_scope()
             for s in stmt.block:
                 self.gen_stmt(s)
             self.end_scope()
-            self.m_output.append(f'\tjmp {label_start}')
-            self.m_output.append(f'{label_end}:')
+            self.m_output.append(f"jmp {label_start}")
+            self.m_output.append(f"{label_end}:")
         elif isinstance(stmt, NodeStmtCountdown):
             self.gen_stmt(stmt.init)
-            label_start = f'.L_countdown_start_{self.m_label_count}'
-            label_end = f'.L_countdown_end_{self.m_label_count}'
+            label_start = f".L_countdown_start_{self.m_label_count}"
+            label_end = f".L_countdown_end_{self.m_label_count}"
             self.m_label_count += 1
-            self.m_output.append(f'{label_start}:')
+            self.m_output.append(f"{label_start}:")
             self.gen_expr(stmt.condition)
-            self.pop('rax')
-            self.m_output.append('\tcmp rax, 0')
-            self.m_output.append(f'\tje {label_end}')
+            self.pop("rax")
+            self.m_output.append("cmp rax, 0")
+            self.m_output.append(f"je {label_end}")
             self.begin_scope()
             for s in stmt.block:
                 self.gen_stmt(s)
             self.end_scope()
             self.gen_stmt(stmt.update)
-            self.m_output.append(f'\tjmp {label_start}')
-            self.m_output.append(f'{label_end}:')
+            self.m_output.append(f"jmp {label_start}")
+            self.m_output.append(f"{label_end}:")
 
     def optimize_assembly(self, assembly_code: str) -> str:
-        lines = assembly_code.split('\n')
+        lines = assembly_code.split("\n")
         used_labels = set()
         for line in lines:
             line = line.strip()
             if any(
                 x in line
-                for x in ['jmp', 'je', 'jne', 'jg', 'jl', 'jge', 'jle', 'call']
+                for x in ["jmp", "je", "jne", "jg", "jl", "jge", "jle", "call"]
             ):
                 parts = line.split()
                 if len(parts) > 1:
@@ -696,14 +697,14 @@ class Generator:
             line = line.strip()
             if not line:
                 continue
-            if line.endswith(':'):
+            if line.endswith(":"):
                 label = line[:-1]
-                if label != 'main' and label not in used_labels:
+                if label != "main" and label not in used_labels:
                     continue
             if last_line and (
                 (
-                    'push' in last_line
-                    and 'pop' in line
+                    "push" in last_line
+                    and "pop" in line
                     and len(last_line.split()) > 1
                     and len(line.split()) > 1
                     and last_line.split()[-1] == line.split()[-1]
@@ -712,10 +713,10 @@ class Generator:
                 optimized.pop()
                 last_line = None
                 continue
-            if last_line and 'mov' in last_line and 'mov' in line:
+            if last_line and "mov" in last_line and "mov" in line:
                 try:
-                    src1, dst1 = map(str.strip, last_line.split(None, 1)[1].split(','))
-                    src2, dst2 = map(str.strip, line.split(None, 1)[1].split(','))
+                    src1, dst1 = map(str.strip, last_line.split(None, 1)[1].split(","))
+                    src2, dst2 = map(str.strip, line.split(None, 1)[1].split(","))
                     if src1 == dst2 and dst1 == src2:
                         optimized.pop()
                         last_line = None
@@ -727,19 +728,19 @@ class Generator:
                 if len(parts) > 1:
                     instruction = parts[0]
                     operands = parts[1]
-                    if instruction in ['xor', 'and', 'or']:
-                        if ',' in operands:
-                            reg1, reg2 = map(str.strip, operands.split(','))
+                    if instruction in ["xor", "and", "or"]:
+                        if "," in operands:
+                            reg1, reg2 = map(str.strip, operands.split(","))
                             if reg1 == reg2:
                                 continue
-                    if instruction in ['add', 'sub', 'mul', 'div', 'imul', 'idiv']:
-                        if ',' in operands:
-                            reg, val = map(str.strip, operands.split(','))
-                            if val in ['0', '1']:
+                    if instruction in ["add", "sub", "mul", "div", "imul", "idiv"]:
+                        if "," in operands:
+                            reg, val = map(str.strip, operands.split(","))
+                            if val in ["0", "1"]:
                                 continue
-                            elif val == '1':
+                            elif val == "1":
                                 optimized.append(
-                                    f'{instruction.replace('add', 'inc').replace('sub', 'dec')} {reg}'
+                                    f"{instruction.replace('add', 'inc').replace('sub', 'dec')} {reg}"
                                 )
                                 last_line = None
                                 continue
@@ -747,118 +748,111 @@ class Generator:
                 pass
             optimized.append(line)
             last_line = line
-        return '\n'.join(optimized)
+        return "\n".join(optimized)
 
     def gen_prog(self) -> str:
         global optimize
-        self.m_output.append('bits 64')
-        self.m_output.append('default rel')
-        self.m_output.append('section .data')
-        self.m_output.append('\tfmt db "%d", 10, 0')
-        self.m_output.append('section .text')
-        self.m_output.append('\tglobal main')
-        self.m_output.append('\textern ExitProcess')
-        self.m_output.append('\textern printf')
-        self.m_output.append('main:')
+        self.m_output.append("bits 64")
+        self.m_output.append("default rel")
+        self.m_output.append("section .data")
+        self.m_output.append('fmt db "%d", 10, 0')
+        self.m_output.append("section .text")
+        self.m_output.append("global main")
+        self.m_output.append("extern ExitProcess")
+        self.m_output.append("extern printf")
+        self.m_output.append("main:")
         for stmt in self.m_prog.stmts:
             self.gen_stmt(stmt)
-        self.m_output.append('\txor rcx, rcx')
-        self.m_output.append('\tcall ExitProcess\n')
+        self.m_output.append("xor rcx, rcx")
+        self.m_output.append("call ExitProcess\n")
         return (
-            self.optimize_assembly('\n'.join(self.m_output))
+            self.optimize_assembly("\n".join(self.m_output))
             if optimize
-            else '\n'.join(self.m_output)
+            else "\n".join(self.m_output)
         )
 
 
 # --- Main Program ---
-if platform.system() != 'Windows':
-    print(f'{RED}ERROR: This program is intended to run on Windows.{RESET}')
-    sys.exit(1)
-if platform.machine().lower() != 'amd64':
-    print(f'{RED}ERROR: This program is intended to run on 64-bit Windows.{RESET}')
-    sys.exit(1)
-if len(sys.argv) == 2 or len(sys.argv) == 3:
-    if sys.argv[1] == '--version':
-        print(f'{CYAN}NewYearLang Compiler 2.2.9{RESET}')
-        sys.exit(0)
-    elif sys.argv[1] == '--help':
-        print(f'{GREEN}Help Menu:{RESET}')
-        print(f'    {GREEN}--asm{RESET}          Generates assembly code from the source')
-        print(f'    {GREEN}--fast{RESET}         Optimize assembly code before generating executable')
-        print(f'    {GREEN}--version{RESET}      Displays the version of the compiler')
-        print(f'    {GREEN}--help{RESET}         Displays this help menu and exits')
-        sys.exit(0)
-    path = os.path.dirname(sys.argv[1])
-    filename = os.path.basename(sys.argv[1]).rsplit('.', 1)[0]
-    try:
-        source_code = open(sys.argv[1], 'r').read()
-    except FileNotFoundError:
-        print(f"{RED}ERROR: File not found - '{sys.argv[1]}'{RESET}")
+@click.command()
+@click.argument("source_file", type=click.Path(exists=True))
+@click.option("--asm", is_flag=True, help="Generates assembly code from the source")
+@click.option(
+    "--fast", is_flag=True, help="Optimize assembly code before generating executable"
+)
+@click.option("--version", is_flag=True, help="Displays the version of the compiler")
+def main(source_file, asm, fast, version):
+    global optimize
+    if platform.system() != "Windows":
+        click.echo(f"{RED}ERROR: This program is intended to run on Windows.{RESET}")
         sys.exit(1)
+    if platform.machine().lower() != "amd64":
+        click.echo(
+            f"{RED}ERROR: This program is intended to run on 64-bit Windows.{RESET}"
+        )
+        sys.exit(1)
+    if version:
+        click.echo(f"{CYAN}NewYearLang Compiler 2.2.9{RESET}")
+        return
+    path = os.path.dirname(source_file)
+    filename = os.path.basename(source_file).rsplit(".", 1)[0]
+    try:
+        with open(source_file, "r") as f:
+            source_code = f.read()
+    except FileNotFoundError:
+        click.echo(f"{RED}ERROR: File not found - '{source_file}'{RESET}")
+        return
     except IOError as e:
-        print(f"{RED}ERROR: Unable to read file '{sys.argv[1]}' - {e}{RESET}")
-else:
-    print(
-        f'{CYAN}Usage: {sys.argv[0]} <source_file> [--asm|--fast|--help|--version]{RESET}\nUse --help for more information'
-    )
-    sys.exit(0)
-
-output_dir = os.path.join(path, 'output')
-os.makedirs(output_dir, exist_ok=True)
-
-# Tokenize and Parse
-try:
-    tokenizer = Tokenizer(source_code)
-    tokens = tokenizer.tokenize()
-    parser = Parser(tokens)
-    prog = parser.parse_prog()
-except Exception as e:
-    print(f'{RED}COMPILER ERROR: Failed to parse source code - {e}{RESET}')
-    sys.exit(3)
-if len(sys.argv) == 3:
-    if sys.argv[2] == '--asm':
+        click.echo(f"{RED}ERROR: Unable to read file '{source_file}' - {e}{RESET}")
+        return
+    output_dir = os.path.join(path, "output")
+    os.makedirs(output_dir, exist_ok=True)
+    try:
+        tokenizer = Tokenizer(source_code)
+        tokens = tokenizer.tokenize()
+        parser = Parser(tokens)
+        prog = parser.parse_prog()
+    except Exception as e:
+        click.echo(f"{RED}COMPILER ERROR: Failed to parse source code - {e}{RESET}")
+        return
+    if fast:
+        optimize = True
+    if asm:
         generator = Generator(prog)
         assembly_code = generator.gen_prog()
-        with open(
-            os.path.join(output_dir, filename + '.asm'), 'w', encoding='utf-8'
-        ) as f:
+        asm_path = os.path.join(output_dir, filename + ".asm")
+        with open(asm_path, "w", encoding="utf-8") as f:
             f.write(assembly_code)
-        sys.exit(0)
-    elif sys.argv[2] == '--fast':
-        optimize = True
-    else:
-        print(
-            f"{RED}ERROR: Unknown argument - '{sys.argv[2]}'{RESET}\nUse --help for more information"
+        return
+    try:
+        generator = Generator(prog)
+        assembly_code = generator.gen_prog()
+        asm_path = os.path.join(output_dir, filename + ".asm")
+        with open(asm_path, "w", encoding="utf-8") as f:
+            f.write(assembly_code)
+        subprocess.run(
+            ["nasm", "-Ox", "-f", "win64", asm_path], check=True, cwd=output_dir
         )
+        subprocess.run(
+            [
+                "gcc",
+                "-o",
+                os.path.join(output_dir, filename + ".exe"),
+                filename + ".obj",
+            ],
+            check=True,
+            cwd=output_dir,
+        )
+        exe_path = os.path.join(output_dir, filename + ".exe")
+        os.system(exe_path)
+    except subprocess.CalledProcessError as e:
+        click.echo(
+            f"{RED}COMPILER ERROR: Command '{e.cmd}' failed with return code {e.returncode}{RESET}"
+        )
+    except FileNotFoundError as e:
+        click.echo(f"{RED}COMPILER ERROR: File not found - {e.filename}{RESET}")
+    except Exception as e:
+        click.echo(f"{RED}COMPILER ERROR: {e}{RESET}")
 
-# Generate Assembly
-generator = Generator(prog)
-assembly_code = generator.gen_prog()
 
-# Output
-with open(os.path.join(output_dir, filename + '.asm'), 'w', encoding='utf-8') as f:
-    f.write(assembly_code)
-try:
-    subprocess.run(
-        ['nasm', '-Ox', '-f', 'win64', os.path.join(output_dir, filename + '.asm')],
-        check=True,
-    )
-    subprocess.run(
-        [
-            'gcc',
-            '-o',
-            os.path.join(output_dir, filename + '.exe'),
-            os.path.join(output_dir, filename + '.obj'),
-        ],
-        check=True,
-    )
-    os.system(os.path.join(output_dir, filename + '.exe'))
-except subprocess.CalledProcessError as e:
-    print(
-        f"{RED}COMPILER ERROR: Command '{e.cmd}' failed with return code {e.returncode}{RESET}"
-    )
-except FileNotFoundError as e:
-    print(f'{RED}COMPILER ERROR: File not found - {e.filename}{RESET}')
-except Exception as e:
-    print(f'{RED}COMPILER ERROR: {e}{RESET}')
+if __name__ == "__main__":
+    main()
