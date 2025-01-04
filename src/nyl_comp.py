@@ -527,11 +527,11 @@ class Generator:
         self.m_label_count = 0
 
     def push(self, reg: str):
-        self.m_output.append(f"push {reg}")
+        self.m_output.append(f"\tpush {reg}")
         self.m_stack_size += 1
 
     def pop(self, reg: str):
-        self.m_output.append(f"pop {reg}")
+        self.m_output.append(f"\tpop {reg}")
         self.m_stack_size -= 1
 
     def begin_scope(self):
@@ -540,19 +540,19 @@ class Generator:
     def end_scope(self):
         pop_count = len(self.m_vars) - self.m_scopes.pop()
         if pop_count != 0:
-            self.m_output.append(f"add rsp, {pop_count * 8}")
+            self.m_output.append(f"\tadd rsp, {pop_count * 8}")
         self.m_stack_size -= pop_count
         self.m_vars = self.m_vars[: len(self.m_vars) - pop_count]
 
     def gen_term(self, term: NodeTerm):
         if isinstance(term, NodeTermIntLit):
-            self.m_output.append(f"mov rax, {term.value}")
+            self.m_output.append(f"\tmov rax, {term.value}")
             self.push("rax")
         elif isinstance(term, NodeTermIdent):
             for var in self.m_vars:
                 if var["name"] == term.value:
                     offset = f"[rsp + {(self.m_stack_size - var['stack_loc'] - 1) * 8}]"
-                    self.m_output.append(f"mov rax, {offset}")
+                    self.m_output.append(f"\tmov rax, {offset}")
                     self.push("rax")
                     return
             print(f"{RED}ERROR: Undeclared identifier - {term.value}{RESET}")
@@ -566,38 +566,38 @@ class Generator:
         self.pop("rax")
         self.pop("rbx")
         if isinstance(bin_expr, NodeBinExprAdd):
-            self.m_output.append("add rax, rbx")
+            self.m_output.append("\tadd rax, rbx")
         elif isinstance(bin_expr, NodeBinExprSub):
-            self.m_output.append("sub rax, rbx")
+            self.m_output.append("\tsub rax, rbx")
         elif isinstance(bin_expr, NodeBinExprMulti):
-            self.m_output.append("imul rbx")
+            self.m_output.append("\timul rbx")
         elif isinstance(bin_expr, NodeBinExprDiv):
-            self.m_output.append("xor rdx, rdx")
-            self.m_output.append("idiv rbx")
+            self.m_output.append("\txor rdx, rdx")
+            self.m_output.append("\tidiv rbx")
         elif isinstance(bin_expr, NodeBinExprEq):
-            self.m_output.append("cmp rax, rbx")
-            self.m_output.append("sete al")
-            self.m_output.append("movzx rax, al")
+            self.m_output.append("\tcmp rax, rbx")
+            self.m_output.append("\tsete al")
+            self.m_output.append("\tmovzx rax, al")
         elif isinstance(bin_expr, NodeBinExprNeq):
-            self.m_output.append("cmp rax, rbx")
-            self.m_output.append("setne al")
-            self.m_output.append("movzx rax, al")
+            self.m_output.append("\tcmp rax, rbx")
+            self.m_output.append("\tsetne al")
+            self.m_output.append("\tmovzx rax, al")
         elif isinstance(bin_expr, NodeBinExprLt):
-            self.m_output.append("cmp rax, rbx")
-            self.m_output.append("setl al")
-            self.m_output.append("movzx rax, al")
+            self.m_output.append("\tcmp rax, rbx")
+            self.m_output.append("\tsetl al")
+            self.m_output.append("\tmovzx rax, al")
         elif isinstance(bin_expr, NodeBinExprGt):
-            self.m_output.append("cmp rax, rbx")
-            self.m_output.append("setg al")
-            self.m_output.append("movzx rax, al")
+            self.m_output.append("\tcmp rax, rbx")
+            self.m_output.append("\tsetg al")
+            self.m_output.append("\tmovzx rax, al")
         elif isinstance(bin_expr, NodeBinExprLte):
-            self.m_output.append("cmp rax, rbx")
-            self.m_output.append("setle al")
-            self.m_output.append("movzx rax, al")
+            self.m_output.append("\tcmp rax, rbx")
+            self.m_output.append("\tsetle al")
+            self.m_output.append("\tmovzx rax, al")
         elif isinstance(bin_expr, NodeBinExprGte):
-            self.m_output.append("cmp rax, rbx")
-            self.m_output.append("setge al")
-            self.m_output.append("movzx rax, al")
+            self.m_output.append("\tcmp rax, rbx")
+            self.m_output.append("\tsetge al")
+            self.m_output.append("\tmovzx rax, al")
         self.push("rax")
 
     def gen_expr(self, expr: NodeExpr):
@@ -608,36 +608,36 @@ class Generator:
 
     def gen_stmt(self, stmt: NodeStmt):
         if isinstance(stmt, NodeStmtComment):
-            self.m_output.append(f"; {stmt.content}")
+            self.m_output.append(f"\t; {stmt.content}")
         elif isinstance(stmt, NodeStmtHappynewyear):
-            self.m_output.append("sub rsp, 40")
+            self.m_output.append("\tsub rsp, 40")
             self.gen_expr(stmt.expr)
             self.pop("rdx")
-            self.m_output.append("lea rcx, [rel fmt]")
-            self.m_output.append("call printf")
-            self.m_output.append("add rsp, 40")
+            self.m_output.append("\tlea rcx, [rel fmt]")
+            self.m_output.append("\tcall printf")
+            self.m_output.append("\tadd rsp, 40")
         elif isinstance(stmt, NodeStmtPeachblossom):
             self.gen_expr(stmt.expr)
             for var in self.m_vars:
                 if var["name"] == stmt.ident:
                     self.pop("rax")
                     offset = f"[rsp + {(self.m_stack_size - var['stack_loc'] - 1) * 8}]"
-                    self.m_output.append(f"mov {offset}, rax")
+                    self.m_output.append(f"\tmov {offset}, rax")
                     return
             self.m_vars.append({"name": stmt.ident, "stack_loc": self.m_stack_size - 1})
         elif isinstance(stmt, NodeStmtCaramelizedporkandeggs):
             self.gen_expr(stmt.condition)
             self.pop("rax")
-            self.m_output.append("cmp rax, 0")
+            self.m_output.append("\tcmp rax, 0")
             label_chungcake = f".L_chungcake_{self.m_label_count}"
             label_end = f".L_end_{self.m_label_count}"
             self.m_label_count += 1
-            self.m_output.append(f"je {label_chungcake}")
+            self.m_output.append(f"\tje {label_chungcake}")
             self.begin_scope()
             for s in stmt.true_block:
                 self.gen_stmt(s)
             self.end_scope()
-            self.m_output.append(f"jmp {label_end}")
+            self.m_output.append(f"\tjmp {label_end}")
             self.m_output.append(f"{label_chungcake}:")
             if stmt.false_block:
                 self.begin_scope()
@@ -652,13 +652,13 @@ class Generator:
             self.m_output.append(f"{label_start}:")
             self.gen_expr(stmt.condition)
             self.pop("rax")
-            self.m_output.append("cmp rax, 0")
-            self.m_output.append(f"je {label_end}")
+            self.m_output.append("\tcmp rax, 0")
+            self.m_output.append(f"\tje {label_end}")
             self.begin_scope()
             for s in stmt.block:
                 self.gen_stmt(s)
             self.end_scope()
-            self.m_output.append(f"jmp {label_start}")
+            self.m_output.append(f"\tjmp {label_start}")
             self.m_output.append(f"{label_end}:")
         elif isinstance(stmt, NodeStmtCountdown):
             self.gen_stmt(stmt.init)
@@ -668,20 +668,23 @@ class Generator:
             self.m_output.append(f"{label_start}:")
             self.gen_expr(stmt.condition)
             self.pop("rax")
-            self.m_output.append("cmp rax, 0")
-            self.m_output.append(f"je {label_end}")
+            self.m_output.append("\tcmp rax, 0")
+            self.m_output.append(f"\tje {label_end}")
             self.begin_scope()
             for s in stmt.block:
                 self.gen_stmt(s)
             self.end_scope()
             self.gen_stmt(stmt.update)
-            self.m_output.append(f"jmp {label_start}")
+            self.m_output.append(f"\tjmp {label_start}")
             self.m_output.append(f"{label_end}:")
 
     def optimize_assembly(self, assembly_code: str) -> str:
         lines = assembly_code.split("\n")
         used_labels = set()
+        tab_info = []
         for line in lines:
+            tab_count = len(line) - len(line.lstrip("\t"))
+            tab_info.append(tab_count)
             line = line.strip()
             if any(
                 x in line
@@ -693,7 +696,8 @@ class Generator:
                     used_labels.add(label)
         optimized = []
         last_line = None
-        for line in lines:
+        for i, line in enumerate(lines):
+            tab_count = tab_info[i]
             line = line.strip()
             if not line:
                 continue
@@ -746,7 +750,7 @@ class Generator:
                                 continue
             except (IndexError, ValueError):
                 pass
-            optimized.append(line)
+            optimized.append("\t" * tab_count + line)
             last_line = line
         return "\n".join(optimized)
 
@@ -755,16 +759,16 @@ class Generator:
         self.m_output.append("bits 64")
         self.m_output.append("default rel")
         self.m_output.append("section .data")
-        self.m_output.append('fmt db "%d", 10, 0')
+        self.m_output.append('\tfmt db "%d", 10, 0')
         self.m_output.append("section .text")
-        self.m_output.append("global main")
-        self.m_output.append("extern ExitProcess")
-        self.m_output.append("extern printf")
+        self.m_output.append("\tglobal main")
+        self.m_output.append("\textern ExitProcess")
+        self.m_output.append("\textern printf")
         self.m_output.append("main:")
         for stmt in self.m_prog.stmts:
             self.gen_stmt(stmt)
-        self.m_output.append("xor rcx, rcx")
-        self.m_output.append("call ExitProcess\n")
+        self.m_output.append("\txor rcx, rcx")
+        self.m_output.append("\tcall ExitProcess\n")
         return (
             self.optimize_assembly("\n".join(self.m_output))
             if optimize
@@ -799,10 +803,10 @@ def main(source_file, asm, fast, version):
         with open(source_file, "r") as f:
             source_code = f.read()
     except FileNotFoundError:
-        click.echo(f"{RED}ERROR: File not found - '{source_file}'{RESET}")
+        click.echo(f'{RED}ERROR: File not found - "{source_file}"{RESET}')
         return
     except IOError as e:
-        click.echo(f"{RED}ERROR: Unable to read file '{source_file}' - {e}{RESET}")
+        click.echo(f'{RED}ERROR: Unable to read file "{source_file}" - {e}{RESET}')
         return
     output_dir = os.path.join(path, "output")
     os.makedirs(output_dir, exist_ok=True)
@@ -815,6 +819,9 @@ def main(source_file, asm, fast, version):
         click.echo(f"{RED}COMPILER ERROR: Failed to parse source code - {e}{RESET}")
         return
     if fast:
+        click.echo(
+            f"{colorama.Fore.LIGHTYELLOW_EX}WARNING: Optimizing assembly code may cause errors, please consider{RESET}"
+        )
         optimize = True
     if asm:
         generator = Generator(prog)
@@ -846,7 +853,7 @@ def main(source_file, asm, fast, version):
         os.system(exe_path)
     except subprocess.CalledProcessError as e:
         click.echo(
-            f"{RED}COMPILER ERROR: Command '{e.cmd}' failed with return code {e.returncode}{RESET}"
+            f'{RED}COMPILER ERROR: Command "{e.cmd}" failed with return code {e.returncode}{RESET}'
         )
     except FileNotFoundError as e:
         click.echo(f"{RED}COMPILER ERROR: File not found - {e.filename}{RESET}")
