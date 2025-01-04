@@ -788,6 +788,7 @@ if len(sys.argv) == 2 or len(sys.argv) == 3:
         print(f'    {GREEN}--fast{RESET}         Optimize assembly code before generating executable')
         print(f'    {GREEN}--version{RESET}      Displays the version of the compiler')
         print(f'    {GREEN}--help{RESET}         Displays this help menu and exits')
+        sys.exit(0)
     path = os.path.dirname(sys.argv[1])
     filename = os.path.basename(sys.argv[1]).rsplit('.', 1)[0]
     try:
