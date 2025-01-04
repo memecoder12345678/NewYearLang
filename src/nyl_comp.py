@@ -15,6 +15,7 @@ RED = colorama.Fore.LIGHTRED_EX
 GREEN = colorama.Fore.LIGHTGREEN_EX
 CYAN = colorama.Fore.LIGHTCYAN_EX
 RESET = colorama.Fore.RESET
+optimize = False
 
 
 class Node:
@@ -444,7 +445,9 @@ class Parser:
             return NodeStmtPeachblossom(ident.value, expr)
         elif token.type == TokenType.HAPPYNEWYEAR:
             if self.in_loop > 0:
-                print(f"{RED}LIMITED FEATURES: 'Happynewyear' statement is not allowed inside loops at line {token.line}{RESET}")
+                print(
+                    f"{RED}LIMITED FEATURES: 'Happynewyear' statement is not allowed inside loops at line {token.line}{RESET}"
+                )
                 sys.exit(1)
             self.consume()
             expr = self.parse_expr()
@@ -671,11 +674,84 @@ class Generator:
             self.m_output.append(f"\tjmp {label_start}")
             self.m_output.append(f"{label_end}:")
 
+    def optimize_assembly(self, assembly_code: str) -> str:
+        lines = assembly_code.split("\n")
+        used_labels = set()
+        for line in lines:
+            line = line.strip()
+            if any(
+                x in line
+                for x in ["jmp", "je", "jne", "jg", "jl", "jge", "jle", "call"]
+            ):
+                parts = line.split()
+                if len(parts) > 1:
+                    label = parts[-1]
+                    used_labels.add(label)
+        optimized = []
+        last_line = None
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+            if line.endswith(":"):
+                label = line[:-1]
+                if label != "main" and label not in used_labels:
+                    continue
+            if last_line and (
+                (
+                    "push" in last_line
+                    and "pop" in line
+                    and len(last_line.split()) > 1
+                    and len(line.split()) > 1
+                    and last_line.split()[-1] == line.split()[-1]
+                )
+            ):
+                optimized.pop()
+                last_line = None
+                continue
+            if last_line and "mov" in last_line and "mov" in line:
+                try:
+                    src1, dst1 = map(str.strip, last_line.split(None, 1)[1].split(","))
+                    src2, dst2 = map(str.strip, line.split(None, 1)[1].split(","))
+                    if src1 == dst2 and dst1 == src2:
+                        optimized.pop()
+                        last_line = None
+                        continue
+                except (IndexError, ValueError):
+                    pass
+            try:
+                parts = line.split()
+                if len(parts) > 1:
+                    instruction = parts[0]
+                    operands = parts[1]
+                    if instruction in ["xor", "and", "or"]:
+                        if "," in operands:
+                            reg1, reg2 = map(str.strip, operands.split(","))
+                            if reg1 == reg2:
+                                continue
+                    if instruction in ["add", "sub", "mul", "div", "imul", "idiv"]:
+                        if "," in operands:
+                            reg, val = map(str.strip, operands.split(","))
+                            if val in ["0", "1"]:
+                                continue
+                            elif val == "1":
+                                optimized.append(
+                                    f"{instruction.replace('add', 'inc').replace('sub', 'dec')} {reg}"
+                                )
+                                last_line = None
+                                continue
+            except (IndexError, ValueError):
+                pass
+            optimized.append(line)
+            last_line = line
+        return "\n".join(optimized)
+
     def gen_prog(self) -> str:
+        global optimize
         self.m_output.append("bits 64")
         self.m_output.append("default rel")
         self.m_output.append("section .data")
-        self.m_output.append("\tfmt db \"%d\", 10, 0")
+        self.m_output.append('\tfmt db "%d", 10, 0')
         self.m_output.append("section .text")
         self.m_output.append("\tglobal main")
         self.m_output.append("\textern ExitProcess")
@@ -685,7 +761,11 @@ class Generator:
             self.gen_stmt(stmt)
         self.m_output.append("\txor rcx, rcx")
         self.m_output.append("\tcall ExitProcess\n")
-        return "\n".join(self.m_output)
+        return (
+            self.optimize_assembly("\n".join(self.m_output))
+            if optimize
+            else "\n".join(self.m_output)
+        )
 
 
 # --- Main Program ---
@@ -709,7 +789,9 @@ if len(sys.argv) == 2 or len(sys.argv) == 3:
     except IOError as e:
         print(f"{RED}ERROR: Unable to read file '{sys.argv[1]}': {e}{RESET}")
 else:
-    print(f"{CYAN}Usage: {sys.argv[0]} <source_file> [--asm|--help|--version].{RESET}")
+    print(
+        f"{CYAN}Usage: {sys.argv[0]} <source_file> [--asm|--fast|--help|--version]{RESET}"
+    )
     sys.exit(0)
 
 output_dir = os.path.join(path, "output")
@@ -733,9 +815,12 @@ if len(sys.argv) == 3:
         ) as f:
             f.write(assembly_code)
         sys.exit(0)
+    elif sys.argv[2] == "--fast":
+        optimize = True
     elif sys.argv[2] == "--help":
         print(f"{GREEN}Help Menu:{RESET}")
         print(f"  {GREEN}--asm{RESET}          Generates assembly code from the source")
+        print(f"  {GREEN}--fast{RESET}         Optimize assembly")
         print(f"  {GREEN}--version{RESET}      Displays the version of the compiler")
         print(f"  {GREEN}--help{RESET}         Displays this help menu and exits")
     else:
@@ -752,7 +837,8 @@ with open(os.path.join(output_dir, filename + ".asm"), "w", encoding="utf-8") as
     f.write(assembly_code)
 try:
     subprocess.run(
-        ["nasm", "-f", "win64", os.path.join(output_dir, filename + ".asm")], check=True
+        ["nasm", "-Ox", "-f", "win64", os.path.join(output_dir, filename + ".asm")],
+        check=True,
     )
     subprocess.run(
         [
