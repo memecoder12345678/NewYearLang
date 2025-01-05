@@ -613,7 +613,9 @@ class Generator:
             self.gen_expr(stmt.expr)
             self.pop("rdx")
             self.m_output.append("\tlea rcx, [rel fmt]")
+            self.m_output.append("\tsub rsp, 8")
             self.m_output.append("\tcall printf")
+            self.m_output.append("\tadd rsp, 8")
         elif isinstance(stmt, NodeStmtPeachblossom):
             self.gen_expr(stmt.expr)
             for var in self.m_vars:
