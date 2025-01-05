@@ -108,6 +108,6 @@ TotalMinutes      : 0.0584914566666667
 TotalSeconds      : 3.5094874
 TotalMilliseconds : 3509.4874
 ```
-Requirement: `Python`, `Nasm`, `Gcc`
+**Requirement**: `Python`, `Nasm`, `Gcc`
 
 **🎆 Happy New Year 2025 🎇**
