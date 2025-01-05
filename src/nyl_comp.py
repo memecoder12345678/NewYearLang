@@ -776,7 +776,7 @@ class Generator:
 
 # --- Main Program ---
 @click.command()
-@click.argument("source_file", type=click.Path(exists=True))
+@click.argument("source_file", required=False)
 @click.option("--asm", is_flag=True, help="Generates assembly code from the source")
 @click.option(
     "--fast", is_flag=True, help="Optimize assembly code before generating executable"
@@ -795,10 +795,13 @@ def main(source_file, asm, fast, version):
     if version:
         click.echo(f"{CYAN}NewYearLang Compiler version 2.2.9{RESET}")
         return
+    if not source_file:
+        click.echo(f"{RED}ERROR: No source file provided{RESET}")
+        sys.exit(1)
     path = os.path.dirname(source_file)
     filename = os.path.basename(source_file).rsplit(".", 1)[0]
     try:
-        with open(source_file, "r") as f:
+        with open(source_file, "r", encoding="utf-8") as f:
             source_code = f.read()
     except FileNotFoundError:
         click.echo(f"{RED}ERROR: File not found - '{source_file}'{RESET}")
@@ -818,22 +821,18 @@ def main(source_file, asm, fast, version):
         return
     if fast:
         click.echo(
-            f"{colorama.Fore.LIGHTYELLOW_EX}WARNING: Optimizing assembly code may cause errors, please consider{RESET}"
+            f"{colorama.Fore.LIGHTYELLOW_EX}WARNING: Optimizing assembly code may cause errors. Proceeding...{RESET}"
         )
         optimize = True
-    if asm:
-        generator = Generator(prog)
-        assembly_code = generator.gen_prog()
-        asm_path = os.path.join(output_dir, filename + ".asm")
-        with open(asm_path, "w", encoding="utf-8") as f:
-            f.write(assembly_code)
-        return
     try:
         generator = Generator(prog)
         assembly_code = generator.gen_prog()
         asm_path = os.path.join(output_dir, filename + ".asm")
         with open(asm_path, "w", encoding="utf-8") as f:
             f.write(assembly_code)
+        if asm:
+            click.echo(f"{CYAN}Assembly code generated at {asm_path}{RESET}")
+            return
         subprocess.run(
             ["nasm", "-Ox", "-f", "win64", asm_path], check=True, cwd=output_dir
         )
@@ -847,14 +846,16 @@ def main(source_file, asm, fast, version):
             check=True,
             cwd=output_dir,
         )
+
         exe_path = os.path.join(output_dir, filename + ".exe")
-        os.system(exe_path)
+        click.echo(f"{CYAN}Executable created at {exe_path}{RESET}")
+        os.system(f'"{exe_path}"')
     except subprocess.CalledProcessError as e:
         click.echo(
             f"{RED}COMPILER ERROR: Command '{e.cmd}' failed with return code {e.returncode}{RESET}"
         )
     except FileNotFoundError as e:
-        click.echo(f"{RED}COMPILER ERROR: File not found - {e.filename}{RESET}")
+        click.echo(f"{RED}COMPILER ERROR: File not found - '{e.filename}'{RESET}")
     except Exception as e:
         click.echo(f"{RED}COMPILER ERROR: {e}{RESET}")
 
