@@ -317,7 +317,7 @@ class Tokenizer:
                 self.consume()
             else:
                 print(
-                    f"{RED}ERROR: Unexpected character - {char} at line {line_count}{RESET}"
+                    f"{RED}ERROR: Unexpected character - '{char}' at line {line_count}{RESET}"
                 )
                 sys.exit(1)
 
@@ -607,7 +607,7 @@ class Generator:
             self.gen_bin_expr(expr)
 
     def gen_stmt(self, stmt: NodeStmt):
-        if isinstance(stmt, NodeStmtComment):
+        if isinstance(stmt, NodeStmtComment) and not optimize:
             self.m_output.append(f"\t; {stmt.content}")
         elif isinstance(stmt, NodeStmtHappynewyear):
             self.gen_expr(stmt.expr)
@@ -742,7 +742,7 @@ class Generator:
                                 continue
                             elif val == "1":
                                 optimized.append(
-                                    f"{instruction.replace('add', 'inc').replace('sub', 'dec')} {reg}"
+                                    f"{instruction.replace("add", "inc").replace("sub", "dec")} {reg}"
                                 )
                                 last_line = None
                                 continue
@@ -801,10 +801,10 @@ def main(source_file, asm, fast, version):
         with open(source_file, "r") as f:
             source_code = f.read()
     except FileNotFoundError:
-        click.echo(f'{RED}ERROR: File not found - "{source_file}"{RESET}')
+        click.echo(f"{RED}ERROR: File not found - '{source_file}'{RESET}")
         return
     except IOError as e:
-        click.echo(f'{RED}ERROR: Unable to read file "{source_file}" - {e}{RESET}')
+        click.echo(f"{RED}ERROR: Unable to read file '{source_file}' - {e}{RESET}")
         return
     output_dir = os.path.join(path, "output")
     os.makedirs(output_dir, exist_ok=True)
@@ -851,7 +851,7 @@ def main(source_file, asm, fast, version):
         os.system(exe_path)
     except subprocess.CalledProcessError as e:
         click.echo(
-            f'{RED}COMPILER ERROR: Command "{e.cmd}" failed with return code {e.returncode}{RESET}'
+            f"{RED}COMPILER ERROR: Command '{e.cmd}' failed with return code {e.returncode}{RESET}"
         )
     except FileNotFoundError as e:
         click.echo(f"{RED}COMPILER ERROR: File not found - {e.filename}{RESET}")
