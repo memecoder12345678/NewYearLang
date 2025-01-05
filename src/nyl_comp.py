@@ -164,7 +164,7 @@ class NodeProg:
 
 # --- Token Definitions ---
 class TokenType:
-    HAPPYNEWYEAR = "happynewyear"
+    HAPPYNEWYEAR = "Happynewyear"
     INT_LIT = "int_lit"
     SEMI = ";"
     IDENT = "ident"
@@ -415,7 +415,7 @@ class Parser:
         while self.peek() is not None and self.peek().type != TokenType.CLOSE_BRACE:
             stmts.append(self.parse_stmt())
         if self.peek() is None:
-            print(f"{RED}ERROR: Unexpected end of file. Expected closing brace.{RESET}")
+            print(f"{RED}ERROR: Unexpected end of file - Expected closing brace{RESET}")
             sys.exit(1)
         self.consume()
         return stmts
@@ -423,7 +423,7 @@ class Parser:
     def parse_stmt(self) -> NodeStmt:
         token = self.peek()
         if token is None:
-            print(f"{RED}ERROR: Unexpected end of file while parsing statement.{RESET}")
+            print(f"{RED}ERROR: Unexpected end of file while parsing statement{RESET}")
             sys.exit(1)
         if token.type == TokenType.COMMENT:
             return NodeStmtComment(self.consume().value)
@@ -555,7 +555,7 @@ class Generator:
                     self.m_output.append(f"\tmov rax, {offset}")
                     self.push("rax")
                     return
-            print(f"{RED}ERROR: Undeclared identifier - {term.value}{RESET}")
+            print(f"{RED}ERROR: Undeclared identifier - '{term.value}'{RESET}")
             sys.exit(1)
         elif isinstance(term, NodeTermParen):
             self.gen_expr(term.expr)
@@ -785,15 +785,15 @@ class Generator:
 def main(source_file, asm, fast, version):
     global optimize
     if platform.system() != "Windows":
-        click.echo(f"{RED}ERROR: This program is intended to run on Windows.{RESET}")
+        click.echo(f"{RED}ERROR: This program is intended to run on Windows{RESET}")
         sys.exit(1)
     if platform.machine().lower() != "amd64":
         click.echo(
-            f"{RED}ERROR: This program is intended to run on 64-bit Windows.{RESET}"
+            f"{RED}ERROR: This program is intended to run on 64-bit Windows{RESET}"
         )
         sys.exit(1)
     if version:
-        click.echo(f"{CYAN}NewYearLang Compiler 2.2.9{RESET}")
+        click.echo(f"{CYAN}NewYearLang Compiler version 2.2.9{RESET}")
         return
     path = os.path.dirname(source_file)
     filename = os.path.basename(source_file).rsplit(".", 1)[0]
