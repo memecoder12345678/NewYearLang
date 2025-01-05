@@ -848,7 +848,6 @@ def main(source_file, asm, fast, version):
         )
 
         exe_path = os.path.join(output_dir, filename + ".exe")
-        click.echo(f"{CYAN}Executable created at {exe_path}{RESET}")
         os.system(f'"{exe_path}"')
     except subprocess.CalledProcessError as e:
         click.echo(
