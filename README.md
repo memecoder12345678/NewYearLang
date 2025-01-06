@@ -118,5 +118,4 @@ TotalMilliseconds : 1342.4904
 **NOTE**: The `Happynewyear` statement is not supported inside loops.
 
 **🎆 Happy New Year 2025 🎇**
-
 ---
