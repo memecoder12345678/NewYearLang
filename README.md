@@ -1,15 +1,17 @@
 # NewYearLang
+
 **Syntax**:
+
 ```plain text
 <Prog> ::= <Stmt>* 
 
 <Stmt> ::= 
-    "Happynewyear" <Expr> ";"                                      // Print statement; cannot be used inside loops.
-    | "Peachblossom" <Ident> "=" <Expr> ";"                        // Variable declaration and assignment.
-    | "Caramelizedporkandeggs" <Expr> "{" <Scope> "}"              // Conditional statement (if).
-    | "Firework" <Expr> "{" <Scope> "}"                            // While loop; does not support the 'Happynewyear' statement inside its scope.
-    | "Countdown" <ForInit> <Expr> ";" <ForUpdate> "{" <Scope> "}" // For loop; does not support the 'Happynewyear' statement inside its scope.
-    | "#" <Comment>                                                // Single-line comment.
+    "Happynewyear" <Expr> ";"                                      // Print statement
+    | "Peachblossom" <Ident> "=" <Expr> ";"                        // Variable declaration and assignment
+    | "Caramelizedporkandeggs" <Expr> "{" <Scope> "}"              // Conditional statement (if)
+    | "Firework" <Expr> "{" <Scope> "}"                            // While loop
+    | "Countdown" <ForInit> <Expr> ";" <ForUpdate> "{" <Scope> "}" // For loop
+    | "#" <Comment>                                                // Single-line comment
 
 <ForInit> ::= "Peachblossom" <Ident> "=" <Expr> ";"
 
@@ -41,7 +43,9 @@
 
 <Ident> ::= [a-zA-Z_][a-zA-Z0-9_]*
 ```
+
 **Result**:
+
 ```plain text
 Python:
 Days              : 0
@@ -108,8 +112,11 @@ TotalMinutes      : 0.02237484
 TotalSeconds      : 1.3424904
 TotalMilliseconds : 1342.4904
 ```
+
 **Requirement**: `Python`, `Nasm`, `Gcc`
 
+**NOTE**: The `Happynewyear` statement is not supported inside loops.
 
 **🎆 Happy New Year 2025 🎇**
+
 ---
