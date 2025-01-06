@@ -4,12 +4,12 @@
 <Prog> ::= <Stmt>* 
 
 <Stmt> ::= 
-    "Happynewyear" <Expr> ";"                                      // print (cannot be used in loops)
-    | "Peachblossom" <Ident> "=" <Expr> ";"                        // var
-    | "Caramelizedporkandeggs" <Expr> "{" <Scope> "}"              // if
-    | "Firework" <Expr> "{" <Scope> "}"                            // while
-    | "Countdown" <ForInit> <Expr> ";" <ForUpdate> "{" <Scope> "}" // for
-    | "#" <Comment>                                                // comment
+    "Happynewyear" <Expr> ";"                                      // Print statement; cannot be used inside loops.
+    | "Peachblossom" <Ident> "=" <Expr> ";"                        // Variable declaration and assignment.
+    | "Caramelizedporkandeggs" <Expr> "{" <Scope> "}"              // Conditional statement (if).
+    | "Firework" <Expr> "{" <Scope> "}"                            // While loop; does not support the 'Happynewyear' statement inside its scope.
+    | "Countdown" <ForInit> <Expr> ";" <ForUpdate> "{" <Scope> "}" // For loop; does not support the 'Happynewyear' statement inside its scope.
+    | "#" <Comment>                                                // Single-line comment.
 
 <ForInit> ::= "Peachblossom" <Ident> "=" <Expr> ";"
 
