@@ -449,9 +449,14 @@ class Parser:
             return NodeStmtPeachblossom(ident.value, expr)
         elif token.type == TokenType.HAPPYNEWYEAR:
             if self.in_loop > 0:
-                print(
-                    f"{RED}LIMITED FEATURES: 'Happynewyear' statement is not allowed inside loops at line {token.line}{RESET}"
-                )
+                print(f"{RED}Error: 'Happynewyear' is not allowed inside loops at line {token.line}{RESET}")
+                print(f"{CYAN}Hint: Store the values in a variable or calculate them in the loop, then print them after the loop{RESET}")
+                print(f"{CYAN}Example:{RESET}")
+                print("    Peachblossom result = 0;")
+                print("    Firework (i < 5) {")
+                print("        result = result + i;")
+                print("    }")
+                print("    Happynewyear result;\n")
                 sys.exit(1)
             self.consume()
             expr = self.parse_expr()
