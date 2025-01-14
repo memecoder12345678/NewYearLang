@@ -14,7 +14,7 @@ Caramelizedporkandeggs x + y > 10 {
 }
 Peachblossom sum = 0;
 Countdown Peachblossom i = 0; i < 10; Peachblossom i = i + 1; {
-    sum = sum + i;
+    Peachblossom sum = sum + i;
 }
 Peachblossom sum = sum + z;
 Firework sum > 0 {
